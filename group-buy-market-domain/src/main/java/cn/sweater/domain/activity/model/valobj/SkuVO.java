@@ -14,4 +14,5 @@ public class SkuVO {
     private String  goodsId;
     private String  goodsName;
     private BigDecimal originalPrice;
+    private BigDecimal ded;
 }
