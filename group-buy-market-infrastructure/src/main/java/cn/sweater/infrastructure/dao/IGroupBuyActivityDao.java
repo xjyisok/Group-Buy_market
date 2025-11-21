@@ -1,6 +1,7 @@
 package cn.sweater.infrastructure.dao;
 
 import cn.sweater.infrastructure.dao.po.GroupBuyActivity;
+import cn.sweater.infrastructure.dao.po.ScSkuActivity;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -14,5 +15,6 @@ public interface IGroupBuyActivityDao {
 
     List<GroupBuyActivity> queryGroupBuyActivityList();
     GroupBuyActivity queryValidGroupBuyActivity(GroupBuyActivity groupBuyActivityReq);
+    GroupBuyActivity queryValidGroupBuyActivityId(Long activityId);
 
 }

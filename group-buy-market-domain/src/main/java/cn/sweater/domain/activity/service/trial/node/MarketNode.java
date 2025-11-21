@@ -26,15 +26,23 @@ public class MarketNode extends AbstractGroupBuyMarketSupport<MarketProductEntit
     @Resource
     private EndNode endNode;
     @Resource
+    private ErrorNode errorNode;
+    @Resource
     private ThreadPoolExecutor threadPoolExecutor;
     @Resource
     private Map<String,IDiscountPreCalculateService> discountPreCalculateServiceMap;
     @Override
     public TrialBalanceEntity doapply(MarketProductEntity requestParameter, DefaultActivityStrategyFactory.DynamicContext dynamicContext) throws Exception {
         log.info("拼团商品查询试算服务-MarketNode userId:{} requestParameter:{}", requestParameter.getUserId(), JSON.toJSONString(requestParameter));
+        if(dynamicContext.getGroupBuyActivityDiscountVO()==null){
+            return router(requestParameter,dynamicContext);
+        }
         GroupBuyActivityDiscountVO.GroupBuyDiscount groupBuyDiscount=dynamicContext.getGroupBuyActivityDiscountVO().getGroupBuyDiscount();
         String userId=requestParameter.getUserId();
         SkuVO sku=dynamicContext.getSkuVO();
+        if(null==groupBuyDiscount||null==sku){
+            return router(requestParameter,dynamicContext);
+        }
         IDiscountPreCalculateService discountPreCalculateService=discountPreCalculateServiceMap.get(groupBuyDiscount.getMarketPlan());
         if (null == discountPreCalculateService) {
             log.info("不存在{}类型的折扣计算服务，支持类型为:{}", groupBuyDiscount.getMarketPlan(), JSON.toJSONString(discountPreCalculateServiceMap.keySet()));
@@ -49,14 +57,19 @@ public class MarketNode extends AbstractGroupBuyMarketSupport<MarketProductEntit
 
     @Override
     public StrategyHandler<MarketProductEntity, DefaultActivityStrategyFactory.DynamicContext, TrialBalanceEntity> get(MarketProductEntity requestParameter, DefaultActivityStrategyFactory.DynamicContext dynamicContext) throws Exception {
+        if (null == dynamicContext.getGroupBuyActivityDiscountVO() || null == dynamicContext.getSkuVO() || null == dynamicContext.getDeductedPrice()) {
+            return errorNode;
+        }
+
         return endNode;
+
     }
 
     @Override
     protected void multithread(MarketProductEntity requestParameter, DefaultActivityStrategyFactory.DynamicContext dynamicContext) throws ExecutionException, InterruptedException, TimeoutException {
 
         QueryGroupBuyActivityDiscountVOThreadTask queryGroupBuyActivityDiscountVOThreadTask=new QueryGroupBuyActivityDiscountVOThreadTask(requestParameter.getSource()
-                ,requestParameter.getChannel(),activityRepository);
+                ,requestParameter.getChannel(),requestParameter.getGoodsId(),activityRepository);
         FutureTask<GroupBuyActivityDiscountVO>groupBuyActivityDiscountVOFutureTask=
                 new FutureTask<>(queryGroupBuyActivityDiscountVOThreadTask);
         QuerySkuVOFromDBThreadTask querySkuVOFromDBThreadTask=new QuerySkuVOFromDBThreadTask(requestParameter.getGoodsId(), activityRepository);
