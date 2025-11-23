@@ -1,9 +1,11 @@
 package cn.sweater.domain.activity.model.valobj;
 
+import cn.sweater.types.common.Constants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
 
@@ -82,5 +84,25 @@ public class GroupBuyActivityDiscountVO {
          */
         private String tagId;
 
+    }
+    public Boolean isVisible(){
+        if(StringUtils.isBlank(tagScope)){
+            return TagScopeEnumVO.VISIBLE.getAllow();
+        }
+        String[] tagIds = tagScope.split(Constants.SPLIT);
+        if(tagIds.length>0&&"1".equals(tagIds[0])&& StringUtils.isNotBlank(tagIds[0])){
+            return TagScopeEnumVO.VISIBLE.getRefuse();
+        }
+        return TagScopeEnumVO.VISIBLE.getAllow();
+    }
+    public Boolean isEnable(){
+        if(StringUtils.isBlank(tagScope)){
+            return TagScopeEnumVO.VISIBLE.getAllow();
+        }
+        String[] tagScopes = tagScope.split(Constants.SPLIT);
+        if(tagScopes.length>1&&"2".equals(tagScopes[1])&& StringUtils.isNotBlank(tagScopes[1])){
+            return TagScopeEnumVO.VISIBLE.getRefuse();
+        }
+        return TagScopeEnumVO.VISIBLE.getAllow();
     }
 }

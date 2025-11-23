@@ -12,6 +12,8 @@ import cn.sweater.infrastructure.dao.po.GroupBuyActivity;
 import cn.sweater.infrastructure.dao.po.GroupBuyDiscount;
 import cn.sweater.infrastructure.dao.po.ScSkuActivity;
 import cn.sweater.infrastructure.dao.po.Sku;
+import cn.sweater.infrastructure.redis.IRedisService;
+import org.redisson.api.RBitSet;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -26,6 +28,8 @@ public class IActivityRepositoryImpl implements IActivityRepository {
     private IGroupBuyActivityDao groupBuyActivityDao;
     @Resource
     private IScSkuActivityDao scSkuActivtiyDao;
+    @Resource
+    private IRedisService redisService;
     @Override
     public GroupBuyActivityDiscountVO queryGroupBuyActivityDiscountVO(Long activityId) {
 //        GroupBuyActivity groupBuyActivityRes =new GroupBuyActivity();
@@ -102,5 +106,13 @@ public class IActivityRepositoryImpl implements IActivityRepository {
         scSkuActivtiyVO.setSource(source);
         scSkuActivtiyVO.setActivityId(scSkuActivtiy.getActivityId());
         return scSkuActivtiyVO;
+    }
+    @Override
+    public Boolean isWithinRange(String userId,String tagId) {
+        RBitSet bitSet = redisService.getBitSet(tagId);
+        if(!bitSet.isExists()){
+            return true;
+        }
+        return bitSet.get(redisService.getIndexFromUserId(userId));
     }
 }

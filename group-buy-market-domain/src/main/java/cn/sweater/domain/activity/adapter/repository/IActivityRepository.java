@@ -10,4 +10,5 @@ public interface IActivityRepository {
     SkuVO querySkuByGoodsId(String goodsId);
 
     ScSkuActivtiyVO queryScSkuActivtiyByScGoodsId(String source, String channel, String goodsId);
+    public Boolean isWithinRange(String userId,String tagId);
 }

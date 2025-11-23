@@ -24,7 +24,7 @@ import java.util.concurrent.*;
 @Service
 public class MarketNode extends AbstractGroupBuyMarketSupport<MarketProductEntity, DefaultActivityStrategyFactory.DynamicContext, TrialBalanceEntity> {
     @Resource
-    private EndNode endNode;
+    private TagNode tagNode;
     @Resource
     private ErrorNode errorNode;
     @Resource
@@ -61,7 +61,7 @@ public class MarketNode extends AbstractGroupBuyMarketSupport<MarketProductEntit
             return errorNode;
         }
 
-        return endNode;
+        return tagNode;
 
     }
 
