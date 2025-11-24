@@ -40,6 +40,10 @@
             <groupId>cn.sweater</groupId>
             <artifactId>group-buy-market-domain</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-spring-boot-starter</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
