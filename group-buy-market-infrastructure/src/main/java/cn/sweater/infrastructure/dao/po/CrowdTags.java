@@ -7,10 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
-/**
- * @description 人群标签
- * @create 2024-12-28 11:42
- */
 @Data
 @Builder
 @AllArgsConstructor

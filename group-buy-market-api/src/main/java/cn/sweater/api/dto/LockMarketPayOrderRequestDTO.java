@@ -1,4 +1,4 @@
-package cn.sweater.domain.activity.model.entity;
+package cn.sweater.api.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,17 +9,19 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MarketProductEntity {
-    /**活动ID*/
-    private Long activityId;
-
+public class LockMarketPayOrderRequestDTO {
     /** 用户ID */
     private String userId;
-    /** 商品ID */
-    private String goodsId;
+    /** 拼单组队ID */
+    private String teamId;
+    /** 活动ID */
+    private Long activityId;
     /** 渠道 */
     private String source;
     /** 来源 */
     private String channel;
-
+    /** 商品ID */
+    private String goodsId;
+    /** 外部交易单号 */
+    private String outTradeNo;
 }

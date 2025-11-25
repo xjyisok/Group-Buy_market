@@ -8,10 +8,6 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.util.Date;
 
-/**
- * @description 用户拼单
- * @create 2025-01-11 10:29
- */
 @Data
 @Builder
 @AllArgsConstructor

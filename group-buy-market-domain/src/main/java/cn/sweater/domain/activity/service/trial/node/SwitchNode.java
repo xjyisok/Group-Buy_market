@@ -24,7 +24,7 @@ public class SwitchNode extends AbstractGroupBuyMarketSupport<MarketProductEntit
             throw new AppException(ResponseCode.E0003.getCode(), ResponseCode.E0003.getInfo());
 
         }
-        if (activityRepository.isCutRange(requestParameter.getUserId())){
+        if (!activityRepository.isCutRange(requestParameter.getUserId())){
             log.info("拼团活动切量拦截 {}", requestParameter.getUserId());
             throw new AppException(ResponseCode.E0004.getCode(), ResponseCode.E0004.getInfo());
 
