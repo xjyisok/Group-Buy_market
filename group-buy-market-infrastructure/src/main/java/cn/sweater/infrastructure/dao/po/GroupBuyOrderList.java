@@ -46,5 +46,8 @@ public class GroupBuyOrderList {
     private Date createTime;
     /** 更新时间 */
     private Date updateTime;
+    /** 唯一业务ID */
+    private String bizId;
+
 
 }

@@ -4,6 +4,7 @@ import cn.sweater.domain.activity.adapter.repository.IActivityRepository;
 import cn.sweater.domain.activity.model.valobj.GroupBuyActivityDiscountVO;
 import cn.sweater.domain.activity.model.valobj.ScSkuActivtiyVO;
 import cn.sweater.domain.activity.model.valobj.SkuVO;
+import cn.sweater.domain.trade.model.entity.GroupBuyActivityEntity;
 import cn.sweater.infrastructure.dao.IGroupBuyActivityDao;
 import cn.sweater.infrastructure.dao.IGroupBuyDiscountDao;
 import cn.sweater.infrastructure.dao.IScSkuActivityDao;
@@ -128,4 +129,5 @@ public class IActivityRepositoryImpl implements IActivityRepository {
     public boolean isCutRange(String userId) {
         return dccService.isCutRange(userId);
     }
+
 }

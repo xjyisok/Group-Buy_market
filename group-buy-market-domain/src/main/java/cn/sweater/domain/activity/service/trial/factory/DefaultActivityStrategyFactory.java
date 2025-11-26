@@ -32,6 +32,7 @@ public class DefaultActivityStrategyFactory {
     public static class DynamicContext{
         private GroupBuyActivityDiscountVO groupBuyActivityDiscountVO;
         private SkuVO skuVO;
+        private BigDecimal payPrice;
         private BigDecimal deductedPrice;
         private Boolean isVisible;
         private Boolean isEnable;

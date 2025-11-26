@@ -95,7 +95,13 @@ public class MarketTradeServiceController implements IMarketTradeServiceApi {
                     .goodsId(goodsId)
                     .activityId(activityId)
                     .build());
-
+            //人群限定
+            if(!trialBalanceEntity.getIsEnable()||!trialBalanceEntity.getIsEnable()){
+                return Response.<LockMarketPayOrderResponseDTO>builder()
+                        .code(ResponseCode.E0007.getCode())
+                        .info(ResponseCode.E0007.getInfo())
+                        .build();
+            }
             GroupBuyActivityDiscountVO groupBuyActivityDiscountVO = trialBalanceEntity.getGroupBuyActivityDiscountVO();
 
             // 锁单
@@ -115,6 +121,7 @@ public class MarketTradeServiceController implements IMarketTradeServiceApi {
                             .goodsId(goodsId)
                             .goodsName(trialBalanceEntity.getGoodsName())
                             .originalPrice(trialBalanceEntity.getOriginalPrice())
+                            .payPrice(trialBalanceEntity.getPayPrice())
                             .deductionPrice(trialBalanceEntity.getDeductionPrice())
                             .outTradeNo(outTradeNo)
                             .build());
