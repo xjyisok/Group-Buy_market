@@ -10,6 +10,10 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface IGroupBuyOrderDao {
 
+    int updateAddCompleteCount(String teamId);
+
+    int updateOrderStatus2Complete(String teamId);
+
     void insert(GroupBuyOrder groupBuyOrder);
 
     int updateAddLockCount(String teamId);
@@ -18,4 +22,5 @@ public interface IGroupBuyOrderDao {
 
     GroupBuyOrder queryGroupBuyProgress(String teamId);
 
+    GroupBuyOrder queryGroupBuyTeamByTeamId(String teamId);
 }

@@ -28,5 +28,9 @@ public class ITagServiceTest {
         RBitSet bitSet = redisService.getBitSet("RQ_KJHKL98UU78H66554GFDV");
         log.info("测试结果：{}",bitSet.get(redisService.getIndexFromUserId("xjy")));
         log.info("测试结果：{}",bitSet.get(redisService.getIndexFromUserId("sq")));
+        log.info("测试结果：{}",bitSet.get(redisService.getIndexFromUserId("dsh")));
+        log.info("测试结果：{}",bitSet.get(redisService.getIndexFromUserId("zy")));
+        log.info("测试结果：{}",bitSet.get(redisService.getIndexFromUserId("yby")));
+        log.info("测试结果：{}",bitSet.get(redisService.getIndexFromUserId("gt")));
     }
 }

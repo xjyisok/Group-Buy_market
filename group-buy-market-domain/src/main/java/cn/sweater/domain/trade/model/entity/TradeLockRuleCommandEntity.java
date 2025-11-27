@@ -9,7 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TradeRuleFilterBackEntity {
-    // 用户参与活动的订单量
-    private Integer userTakeOrderCount;
+public class TradeLockRuleCommandEntity {
+    /** 用户ID */
+    private String userId;
+    /** 活动ID */
+    private Long activityId;
+
+
 }

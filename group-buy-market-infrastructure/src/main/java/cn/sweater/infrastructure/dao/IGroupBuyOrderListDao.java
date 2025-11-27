@@ -3,6 +3,8 @@ package cn.sweater.infrastructure.dao;
 import cn.sweater.infrastructure.dao.po.GroupBuyOrderList;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * @description 用户拼单明细
  * @create 2025-01-11 09:07
@@ -10,9 +12,13 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface IGroupBuyOrderListDao {
 
+    int updateOrderStatus2Complete(GroupBuyOrderList groupBuyOrderListreq);
+
     void insert(GroupBuyOrderList groupBuyOrderListReq);
 
     GroupBuyOrderList queryGroupBuyOrderRecordByOutTradeNo(GroupBuyOrderList groupBuyOrderListReq);
 
     Integer queryOrderCountByActivityId(GroupBuyOrderList groupBuyOrderListReq);
+
+    List<String> queryGroupBuyCompleteOrderOutTradeNoListByTeamId(String teamId);
 }

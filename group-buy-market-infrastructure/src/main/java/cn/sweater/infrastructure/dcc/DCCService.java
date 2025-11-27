@@ -1,7 +1,11 @@
 package cn.sweater.infrastructure.dcc;
 
 import cn.sweater.types.annotations.DCCValue;
+import cn.sweater.types.common.Constants;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class DCCService {
@@ -9,6 +13,8 @@ public class DCCService {
     private String downgradeSwitch;
     @DCCValue("cutRange:100")
     private String cutRange;
+    @DCCValue("scBlackList:s02c02")
+    private String scBlackList;
     public Boolean isDowngradeSwitch() {
         return "1".equals(downgradeSwitch);
     }
@@ -16,5 +22,9 @@ public class DCCService {
         int hashCode = userId.hashCode();
         int lastTwoDigits = hashCode % 100;
         return lastTwoDigits<=Integer.parseInt(cutRange);
+    }
+    public Boolean isScBlackList(String source,String channel) {
+        List<String> blackList = Arrays.asList(scBlackList.split(Constants.SPLIT));
+        return blackList.contains(source+channel);
     }
 }
