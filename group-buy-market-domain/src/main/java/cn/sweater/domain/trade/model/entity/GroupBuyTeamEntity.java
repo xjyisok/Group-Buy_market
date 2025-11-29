@@ -30,5 +30,6 @@ public class GroupBuyTeamEntity {
     private Date validEndTime;
     /** 状态（0-拼单中、1-完成、2-失败） */
     private GroupBuyOrderEnumVO status;
-
+    /** 回调Url*/
+    private String notifyUrl;
 }

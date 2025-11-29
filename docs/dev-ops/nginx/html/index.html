@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Sweater - 拼团项目 - 商品详情页</title>
+    <link rel="stylesheet" href="css/index.css" />
+</head>
+<body>
+<main class="page-container">
+    <!-- header -->
+    <header class="topbar">
+        <div class="logo">Sweater</div>
+        <div class="header-actions">
+            <button class="icon-btn" title="搜索">🔍</button>
+            <button class="icon-btn" title="购物车">🛒</button>
+        </div>
+    </header>
+
+    <!-- 轮播 -->
+    <section class="hero">
+        <div class="swiper-container" aria-label="商品图片轮播">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide"><img src="./images/sku-13811216-01.png" alt="图1"></div>
+                <div class="swiper-slide"><img src="./images/sku-13811216-02.png" alt="图2"></div>
+                <div class="swiper-slide"><img src="./images/sku-13811216-03.png" alt="图3"></div>
+            </div>
+            <div class="swiper-pagination" role="tablist"></div>
+        </div>
+    </section>
+
+    <!-- 商品信息 -->
+    <section class="product-info card">
+        <div class="title-row">
+            <h1 class="product-title">手写MyBatis：渐进式源码实践（全彩）</h1>
+            <span class="badge">大促</span>
+        </div>
+        <p class="promo">直降 <strong>¥60</strong> · 还有 <strong>76</strong> 人在抢 · 立即参与抢购</p>
+
+        <div class="price-row">
+            <div>
+                <div class="price-label">拼团价</div>
+                <div class="price-main">¥<span class="price-amount">40</span></div>
+                <div class="origin">原价 <del>¥100</del></div>
+            </div>
+            <div class="action-quick">
+                <button class="pill-btn group-buy" data-price="40">开团购买</button>
+                <button class="pill-btn buy-alone" data-price="100">单独购买</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 拼单列表 -->
+    <section class="group-list card">
+        <h2 class="section-title">正在拼单（3）</h2>
+        <div class="group-items">
+            <div class="group-item">
+                <div class="left">
+                    <div class="avatar">S</div>
+                    <div class="meta">
+                        <div class="user">sweater</div>
+                        <div class="status">组队仅剩 <strong>1</strong> 人 · <span class="countdown">00:05:49</span></div>
+                    </div>
+                </div>
+                <div class="right">
+                    <button class="group-btn" data-price="40">参与拼团</button>
+                </div>
+            </div>
+
+            <div class="group-item">
+                <div class="left">
+                    <div class="avatar">D</div>
+                    <div class="meta">
+                        <div class="user">dsh</div>
+                        <div class="status">组队仅剩 <strong>2</strong> 人 · <span class="countdown">00:12:34</span></div>
+                    </div>
+                </div>
+                <div class="right">
+                    <button class="group-btn" data-price="40">参与拼团</button>
+                </div>
+            </div>
+
+            <div class="group-item">
+                <div class="left">
+                    <div class="avatar">SQ</div>
+                    <div class="meta">
+                        <div class="user">sq</div>
+                        <div class="status">组队仅剩 <strong>1</strong> 人 · <span class="countdown">00:02:10</span></div>
+                    </div>
+                </div>
+                <div class="right">
+                    <button class="group-btn" data-price="40">参与拼团</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 空白占位 -->
+    <div class="spacer"></div>
+
+    <!-- 支付弹窗 -->
+    <div id="paymentModal" class="modal" aria-hidden="true">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="payTitle">
+            <h3 id="payTitle">扫码支付</h3>
+            <p class="pay-desc" id="paymentAmount">支付金额：¥0</p>
+            <img src="./images/sku-13811216-04.png" alt="支付二维码" class="qr-code">
+            <div class="modal-actions">
+                <button id="cancelPayment" class="btn neutral">取消</button>
+                <button id="completePayment" class="btn primary">支付完成</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部操作栏 -->
+    <nav class="action-bar">
+        <button class="action-price">单独购买 ¥100</button>
+        <div class="action-controls">
+            <button class="pill-btn small group-buy" data-price="40">开团购买</button>
+            <button class="pill-btn small buy-alone" data-price="100">单独购买</button>
+        </div>
+    </nav>
+</main>
+
+<script src="js/index.js"></script>
+</body>
+</html>

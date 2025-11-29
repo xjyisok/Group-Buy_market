@@ -5,7 +5,10 @@ import cn.sweater.domain.trade.model.aggergate.GroupBuyTeamSettlementAggregate;
 import cn.sweater.domain.trade.model.entity.GroupBuyActivityEntity;
 import cn.sweater.domain.trade.model.entity.GroupBuyTeamEntity;
 import cn.sweater.domain.trade.model.entity.MarketPayOrderEntity;
+import cn.sweater.domain.trade.model.entity.NotifyTaskEntity;
 import cn.sweater.domain.trade.model.valobj.GroupBuyProgressVO;
+
+import java.util.List;
 
 public interface ITradeRepository {
 
@@ -24,4 +27,13 @@ public interface ITradeRepository {
     void settlementMarketPayOrder(GroupBuyTeamSettlementAggregate groupBuyTeamSettlementAggregate);
 
     boolean isSCIntercept(String source, String channel);
+
+    List<NotifyTaskEntity> queryUnExecutedNotifyTaskList();
+    List<NotifyTaskEntity> queryUnExecutedNotifyTaskList(String teamId);
+
+    int updateNotifyTaskStatusSuccess(String teamId);
+
+    int updateNotifyTaskStatusError(String teamId);
+
+    int updateNotifyTaskStatusRetry(String teamId);
 }

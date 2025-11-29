@@ -1,0 +1,117 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+          radial-gradient(1200px 600px at 10% 10%, rgba(79, 70, 229, 0.17), transparent 12%),
+          radial-gradient(1000px 500px at 90% 90%, rgba(6, 182, 212, 0.12), transparent 10%),
+          #071025;
+  color: #e6eef8;
+}
+
+.login-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.login-card {
+  width: 380px;
+  padding: 40px 34px;
+
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(14px);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+
+  box-shadow: 0 12px 40px rgba(4, 10, 25, 0.5);
+}
+
+.title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #4f46e5, #06b6d4);
+  -webkit-background-clip: text;
+  color: transparent;
+  margin-bottom: 32px;
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 28px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 4px;
+  font-size: 16px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  transition: 0.25s;
+}
+
+.input-group input:focus {
+  border-bottom: 2px solid #4f46e5;
+}
+
+.input-group label {
+  position: absolute;
+  top: 12px;
+  left: 4px;
+  font-size: 15px;
+  color: #9aa7c7;
+  pointer-events: none;
+  transition: 0.25s;
+}
+
+.input-group input:focus ~ label,
+.input-group input:valid ~ label {
+  top: -14px;
+  font-size: 12px;
+  color: #4f46e5;
+}
+
+/* 登录按钮 */
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+
+  background: linear-gradient(90deg, #4f46e5, #06b6d4);
+  color: white;
+
+  box-shadow: 0 10px 25px rgba(79, 70, 229, 0.25);
+  transition: 0.25s;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px rgba(79, 70, 229, 0.35);
+}
+
+.error-message {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 14px;
+  color: #ff6b6b;
+  display: none;
+}

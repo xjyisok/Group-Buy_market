@@ -30,14 +30,14 @@ public class TradeSettlementOrderServiceTest {
     @Test
     public void test_settlementMarketPayOrder() throws Exception {
         TradePaySuccessEntity tradePaySuccessEntity = new TradePaySuccessEntity();
-        tradePaySuccessEntity.setSource("s02");
-        tradePaySuccessEntity.setChannel("c02");
+        tradePaySuccessEntity.setSource("s01");
+        tradePaySuccessEntity.setChannel("c01");
         tradePaySuccessEntity.setUserId("dsh");
-        tradePaySuccessEntity.setOutTradeNo("636289090894");
+        tradePaySuccessEntity.setOutTradeNo("423448505165");
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);
-        calendar.add(Calendar.HOUR_OF_DAY, 2);
+        calendar.add(Calendar.HOUR_OF_DAY, 0);
         tradePaySuccessEntity.setOutTradeTime(calendar.getTime());
         TradePaySettlementEntity tradePaySettlementEntity = tradeSettlementOrderService.settlementMarketPayOrder(tradePaySuccessEntity);
         log.info("请求参数:{}", JSON.toJSONString(tradePaySuccessEntity));

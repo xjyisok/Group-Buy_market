@@ -26,6 +26,7 @@ public class EndRuleFilter implements ILogicHandler<TradeSettlementRuleCommandEn
                 .status(groupBuyTeamEntity.getStatus())
                 .validEndTime(groupBuyTeamEntity.getValidEndTime())
                 .validStartTime(groupBuyTeamEntity.getValidStartTime())
+                .notifyUrl(groupBuyTeamEntity.getNotifyUrl())
                 .build();
     }
 }

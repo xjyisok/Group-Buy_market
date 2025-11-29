@@ -27,10 +27,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Repository
@@ -103,6 +100,7 @@ public class ITradeRepositoryImpl implements ITradeRepository {
                     .validStartTime(currentTime)//NOTE:当前拼团单开始时间
                     .validEndTime(calendar.getTime())// NOTE:当前拼团单结束时间
                     .lockCount(1)
+                    .notifyUrl(payDiscountEntity.getNotifyUrl())
                     .status(0)
                     .build();
             groupBuyOrderDao.insert(groupBuyOrder);
@@ -185,6 +183,7 @@ public class ITradeRepositoryImpl implements ITradeRepository {
                 .status(GroupBuyOrderEnumVO.valueOf(groupBuyOrder.getStatus()))
                 .validStartTime(groupBuyOrder.getValidStartTime())
                 .validEndTime(groupBuyOrder.getValidEndTime())
+                .notifyUrl(groupBuyOrder.getNotifyUrl())
                 .build();
 
     }
@@ -221,7 +220,7 @@ public class ITradeRepositoryImpl implements ITradeRepository {
             NotifyTask notifyTask = new NotifyTask();
             notifyTask.setActivityId(groupBuyTeamEntity.getActivityId());
             notifyTask.setTeamId(groupBuyTeamEntity.getTeamId());
-            notifyTask.setNotifyUrl("暂无");
+            notifyTask.setNotifyUrl(groupBuyTeamEntity.getNotifyUrl());
             notifyTask.setNotifyCount(0);
             notifyTask.setNotifyStatus(0);
             notifyTask.setParameterJson(JSON.toJSONString(new HashMap<String, Object>() {{
@@ -236,5 +235,64 @@ public class ITradeRepositoryImpl implements ITradeRepository {
     @Override
     public boolean isSCIntercept(String source, String channel) {
         return dccService.isScBlackList(source, channel);
+    }
+
+    @Override
+    public List<NotifyTaskEntity> queryUnExecutedNotifyTaskList() {
+        List<NotifyTask> notifyTaskList = notifyTaskDao.queryUnExecutedNotifyTaskList();
+        //System.out.println(notifyTaskList.size());
+        if (notifyTaskList.isEmpty()) return new ArrayList<>();
+
+        List<NotifyTaskEntity> notifyTaskEntities = new ArrayList<>();
+        for (NotifyTask notifyTask : notifyTaskList) {
+
+            NotifyTaskEntity notifyTaskEntity = NotifyTaskEntity.builder()
+                    .teamId(notifyTask.getTeamId())
+                    .notifyUrl(notifyTask.getNotifyUrl())
+                    .notifyCount(notifyTask.getNotifyCount())
+                    .parameterJson(notifyTask.getParameterJson())
+                    .build();
+
+            notifyTaskEntities.add(notifyTaskEntity);
+        }
+
+        return notifyTaskEntities;
+
+    }
+
+    @Override
+    public int updateNotifyTaskStatusSuccess(String teamId) {
+        return notifyTaskDao.updateNotifyTaskStatusSuccess(teamId);
+    }
+
+    @Override
+    public int updateNotifyTaskStatusRetry(String teamId) {
+        return notifyTaskDao.updateNotifyTaskStatusRetry(teamId);
+    }
+
+    @Override
+    public int updateNotifyTaskStatusError(String teamId) {
+        return notifyTaskDao.updateNotifyTaskStatusError(teamId);
+    }
+
+    @Override
+    public List<NotifyTaskEntity> queryUnExecutedNotifyTaskList(String teamId) {
+        List<NotifyTask> notifyTaskList = notifyTaskDao.queryUnExecutedNotifyTaskList(teamId);
+        if (notifyTaskList.isEmpty()) return new ArrayList<>();
+
+        List<NotifyTaskEntity> notifyTaskEntities = new ArrayList<>();
+        for (NotifyTask notifyTask : notifyTaskList) {
+
+            NotifyTaskEntity notifyTaskEntity = NotifyTaskEntity.builder()
+                    .teamId(notifyTask.getTeamId())
+                    .notifyUrl(notifyTask.getNotifyUrl())
+                    .notifyCount(notifyTask.getNotifyCount())
+                    .parameterJson(notifyTask.getParameterJson())
+                    .build();
+
+            notifyTaskEntities.add(notifyTaskEntity);
+        }
+
+        return notifyTaskEntities;
     }
 }

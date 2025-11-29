@@ -115,6 +115,17 @@
                 <artifactId>commons-codec</artifactId>
                 <version>1.15</version>
             </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp-sse</artifactId>
+                <version>3.14.9</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>logging-interceptor</artifactId>
+                <version>3.14.9</version>
+            </dependency>
+
 
             <!-- 工程模块 -->
             <dependency>

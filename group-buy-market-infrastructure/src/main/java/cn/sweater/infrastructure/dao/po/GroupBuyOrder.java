@@ -44,6 +44,8 @@ public class GroupBuyOrder {
     private Date validEndTime;
     /** 创建时间 */
     private Date createTime;
+    /** 回调Url*/
+    private String notifyUrl;
     /** 更新时间 */
     private Date updateTime;
 
