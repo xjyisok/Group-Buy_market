@@ -17,7 +17,8 @@ public interface ITradeSettlementOrderService {
      * @param tradePaySuccessEntity 交易支付订单实体对象
      * @return 交易结算订单实体
      */
-    TradePaySettlementEntity settlementMarketPayOrder(TradePaySuccessEntity tradePaySuccessEntity) throws Exception;
+    TradePaySettlementEntity settlementMarketPayOrder(TradePaySuccessEntity tradePaySuccessEntity) throws Exception;//NOTE结算
+
     Map<String,Integer> execSettlementNotifyJob()throws Exception;
-    Map<String,Integer> execSettlementNotifyJob(String teamId)throws Exception;
+    Map<String,Integer> execSettlementNotifyJob(String teamId)throws Exception;//NOTE回调用于拼团订单人数满足要求
 }

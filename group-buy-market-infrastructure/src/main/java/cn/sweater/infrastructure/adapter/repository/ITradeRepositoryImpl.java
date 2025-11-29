@@ -146,7 +146,7 @@ public class ITradeRepositoryImpl implements ITradeRepository {
         GroupBuyOrderList groupBuyOrderListReq = new GroupBuyOrderList();
         groupBuyOrderListReq.setActivityId(activityId);
         groupBuyOrderListReq.setUserId(userId);
-        return groupBuyOrderListDao.    queryOrderCountByActivityId(groupBuyOrderListReq);
+        return groupBuyOrderListDao.queryOrderCountByActivityId(groupBuyOrderListReq);
 
     }
 
