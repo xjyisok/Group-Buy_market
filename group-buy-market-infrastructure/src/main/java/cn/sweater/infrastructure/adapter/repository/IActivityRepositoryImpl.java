@@ -192,7 +192,14 @@ public class IActivityRepositoryImpl implements IActivityRepository {
         groupBuyOrderListReq.setUserId(userId);
         groupBuyOrderListReq.setCount(randomGroupNo*2);
         List<GroupBuyOrderList> randomGroupBuyOrderList = groupBuyOrderListDao.queryInProgressRandomGroupBuyOrderDetailListByUserId(groupBuyOrderListReq);
-        if (null == randomGroupBuyOrderList || randomGroupBuyOrderList.isEmpty()) return null;
+        //NOTE获取当前用户自己参与的teamID防止重复
+        Set<String> teamIdsSelf = userGroupBuyOrderDetailEntityList.stream().map(UserGroupBuyOrderDetailEntity::getTeamId).
+                filter(teamId -> teamId != null && !teamId.isEmpty()).collect(Collectors.toSet());
+        //NOTE这里过滤掉用户拼团订单下的orderlist是防止打乱的时候由于用户拼团订单下的orderlist比较多，非用户拼团订单一个也没保留
+        randomGroupBuyOrderList = randomGroupBuyOrderList.stream()
+                .filter(item -> !teamIdsSelf.contains(item.getTeamId()))
+                .collect(Collectors.toList());
+        if (randomGroupBuyOrderList.isEmpty()) return null;
         //判断总量是否大于
         if (randomGroupNo < randomGroupBuyOrderList.size()) {
             // 随机打乱列表
@@ -200,9 +207,7 @@ public class IActivityRepositoryImpl implements IActivityRepository {
             // 获取前 randomCount 个元素
             randomGroupBuyOrderList = randomGroupBuyOrderList.subList(0, randomGroupNo);
         }
-        //NOTE获取当前用户自己参与的teamID防止重复
-        Set<String> teamIdsSelf = userGroupBuyOrderDetailEntityList.stream().map(UserGroupBuyOrderDetailEntity::getTeamId).
-                filter(teamId -> teamId != null && !teamId.isEmpty()).collect(Collectors.toSet());
+
         //过滤队伍获取teamId
         Set<String> teamIds = randomGroupBuyOrderList.stream().map(GroupBuyOrderList::getTeamId).
                 filter(teamId -> teamId != null && !teamId.isEmpty()&&!teamIdsSelf.contains(teamId)).collect(Collectors.toSet());
