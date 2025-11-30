@@ -2,6 +2,7 @@ package cn.sweater.infrastructure.dao;
 
 import cn.sweater.infrastructure.dao.po.GroupBuyOrder;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Set;
@@ -13,9 +14,9 @@ import java.util.Set;
 @Mapper
 public interface IGroupBuyOrderDao {
 
-    List<GroupBuyOrder> queryInProgressGroupByTeamIds(Set<String> teamIds);
+    List<GroupBuyOrder> queryInProgressGroupByTeamIds(@Param("teamIds") Set<String> teamIds);
 
-    List<GroupBuyOrder> queryInProgressGroupByTeamIdsUserSelf(Set<String> teamIds);
+    List<GroupBuyOrder> queryInProgressGroupByTeamIdsUserSelf(@Param("teamIds") Set<String> teamIds);
 
     int updateAddCompleteCount(String teamId);
 
@@ -31,9 +32,9 @@ public interface IGroupBuyOrderDao {
 
     GroupBuyOrder queryGroupBuyTeamByTeamId(String teamId);
 
-    Integer queryAllTeamCount(Set<String> teamIds);
+    Integer queryAllTeamCount(@Param("teamIds") Set<String> teamIds);
 
-    Integer queryAllTeamCompleteCount(Set<String> teamIds);
+    Integer queryAllTeamCompleteCount(@Param("teamIds") Set<String> teamIds);
 
-    Integer queryAllUserCount(Set<String> teamIds);
+    Integer queryAllUserCount(@Param("teamIds") Set<String> teamIds);
 }
