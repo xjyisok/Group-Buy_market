@@ -37,8 +37,9 @@ public class MarketTradeServiceController implements IMarketTradeServiceApi {
     @Resource
     private ITradeSettlementOrderService tradeSettlementOrderService;
     //NOTE用户点击参与拼团发起的请求
+    @RequestMapping(value = "lock_market_pay_order", method = RequestMethod.POST)
     @Override
-    public Response<LockMarketPayOrderResponseDTO> lockMarketPayOrder(LockMarketPayOrderRequestDTO lockMarketPayOrderRequestDTO) {
+    public Response<LockMarketPayOrderResponseDTO> lockMarketPayOrder(@RequestBody LockMarketPayOrderRequestDTO lockMarketPayOrderRequestDTO) {
         try {
             // 参数
             String userId = lockMarketPayOrderRequestDTO.getUserId();
@@ -157,6 +158,7 @@ public class MarketTradeServiceController implements IMarketTradeServiceApi {
         }
     }
     //NOTE用户点击支付发起的请求
+    @RequestMapping(value = "settlement_market_pay_order", method = RequestMethod.POST)
     @Override
     public Response<SettlementMarketPayOrderResponseDTO> settlementMarketPayOrder(@RequestBody SettlementMarketPayOrderRequestDTO requestDTO) throws Exception {
         try {

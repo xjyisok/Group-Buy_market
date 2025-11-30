@@ -34,13 +34,17 @@ public class IIndexGroupBuyMarketServiceImpl implements IIndexGroupBuyMarketServ
         List<UserGroupBuyOrderDetailEntity>unionAllTeam=new ArrayList<>();
         if(userSelfGroupNo!=0){
             List<UserGroupBuyOrderDetailEntity>userSelfList=activityRepository.queryInProgressUserGroupBuyOrderDetailListByOwner(activityId,userId,userSelfGroupNo);
-            System.out.println(JSON.toJSONString(userSelfList));
-            unionAllTeam.addAll(userSelfList);
+            //System.out.println(JSON.toJSONString(userSelfList));
+            if(null!=userSelfList && !userSelfList.isEmpty()) {
+                unionAllTeam.addAll(userSelfList);
+            }
         }
         if(otherGroupNo!=0){
             List<UserGroupBuyOrderDetailEntity>randomTeamList=activityRepository.queryInProgressUserGroupBuyOrderDetailListByRandom(activityId,userId,otherGroupNo);
-            System.out.println(JSON.toJSONString(randomTeamList));
-            unionAllTeam.addAll(randomTeamList);
+            //System.out.println(JSON.toJSONString(randomTeamList));
+            if(null!=randomTeamList && !randomTeamList.isEmpty()) {
+                unionAllTeam.addAll(randomTeamList);
+            }
         }
         return unionAllTeam;
     }
