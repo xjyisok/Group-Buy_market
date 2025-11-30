@@ -15,6 +15,8 @@ public interface IGroupBuyOrderDao {
 
     List<GroupBuyOrder> queryInProgressGroupByTeamIds(Set<String> teamIds);
 
+    List<GroupBuyOrder> queryInProgressGroupByTeamIdsUserSelf(Set<String> teamIds);
+
     int updateAddCompleteCount(String teamId);
 
     int updateOrderStatus2Complete(String teamId);

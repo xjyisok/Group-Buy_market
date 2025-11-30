@@ -141,6 +141,7 @@ public class IActivityRepositoryImpl implements IActivityRepository {
         groupBuyOrderListReq.setUserId(userId);
         groupBuyOrderListReq.setCount(userSelfGroupNo);
         List<GroupBuyOrderList> userGroupBuyOrderList = groupBuyOrderListDao.queryInProgressUserGroupBuyOrderDetailListByUserId(groupBuyOrderListReq);
+        //System.out.println(userGroupBuyOrderList);
         if (null == userGroupBuyOrderList || userGroupBuyOrderList.isEmpty()) return null;
         //NOTE提前将用户参与的teamId和OutTradeNo匹配好
         Map<String,String> teamOutTradeNoMap=new HashMap<>();
@@ -150,9 +151,11 @@ public class IActivityRepositoryImpl implements IActivityRepository {
         //过滤队伍获取Id
         Set<String> teamIds = userGroupBuyOrderList.stream().map(GroupBuyOrderList::getTeamId).
                 filter(teamId -> teamId != null && !teamId.isEmpty()).collect(Collectors.toSet());
+        System.out.println(teamIds);
         //根据teamId查询用户参与的拼团
-        List<GroupBuyOrder> userGroupBuyOrder = groupBuyOrderDao.queryInProgressGroupByTeamIds(teamIds);
+        List<GroupBuyOrder> userGroupBuyOrder = groupBuyOrderDao.queryInProgressGroupByTeamIdsUserSelf(teamIds);
         if (null == userGroupBuyOrder || userGroupBuyOrder.isEmpty()) return null;
+        //System.out.println("NoTTTTTTTTTTTTTTNULL");
         List<UserGroupBuyOrderDetailEntity> userGroupBuyOrderDetailEntities = new ArrayList<>();
         //teamId和拼团订单映射
         Map<String, GroupBuyOrder> groupBuyOrderMap = userGroupBuyOrder.stream()
@@ -160,6 +163,9 @@ public class IActivityRepositoryImpl implements IActivityRepository {
         //将用户自己参与的拼团信息组合
         for (String teamId : teamIds) {
             List<String>userIdList=groupBuyOrderListDao.queryUserIdsByTeamId(teamId);
+//            System.out.println("_--------------------------------------");
+//            System.out.println(userIdList);
+//            System.out.println("----------------------------------------");
             GroupBuyOrder groupBuyOrder = groupBuyOrderMap.get(teamId);
             if (null == groupBuyOrder) continue;
             UserGroupBuyOrderDetailEntity userGroupBuyOrderDetailEntity = new UserGroupBuyOrderDetailEntity();
@@ -174,6 +180,7 @@ public class IActivityRepositoryImpl implements IActivityRepository {
             userGroupBuyOrderDetailEntity.setOutTradeNo(teamOutTradeNoMap.get(teamId));
             userGroupBuyOrderDetailEntities.add(userGroupBuyOrderDetailEntity);
         }
+        //System.out.println(userGroupBuyOrderDetailEntities);
         return userGroupBuyOrderDetailEntities;
     }
 
