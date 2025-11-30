@@ -5,7 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -13,7 +15,7 @@ import java.util.Date;
 @Builder
 public class UserGroupBuyOrderDetailEntity {
     // 用户ID
-    private String userId;
+    private List<String> userIds=new ArrayList<String>();
     // 拼单组队ID
     private String teamId;
     // 活动ID

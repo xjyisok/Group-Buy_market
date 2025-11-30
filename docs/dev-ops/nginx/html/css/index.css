@@ -4,8 +4,10 @@
     box-sizing: border-box;
 }
 body {
-    background: #f5f5f5;
-    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    color: #e6e6e6;
+    line-height: 1.6;
 }
 
 /* 轮播图样式 */
@@ -14,10 +16,12 @@ body {
     height: 375px;
     position: relative;
     overflow: hidden;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 .swiper-wrapper {
     display: flex;
-    transition: transform 0.3s;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 .swiper-slide {
     flex: 0 0 100%;
@@ -30,80 +34,159 @@ body {
 }
 .swiper-pagination {
     position: absolute;
-    bottom: 10px;
+    bottom: 15px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: 6px;
+    gap: 8px;
 }
 .swiper-dot {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.5);
-    transition: all 0.3s;
+    background: rgba(255,255,255,0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 .swiper-dot.active {
-    background: #ff5000;
-    width: 16px;
-    border-radius: 4px;
+    background: #4cc9f0;
+    width: 24px;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(76, 201, 240, 0.7);
 }
 
 /* 商品信息 */
 .product-info {
-    padding: 15px;
-    background: white;
+    padding: 20px 15px;
+    background: rgba(30, 30, 46, 0.8);
+    margin: 15px;
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 .product-title {
-    font-size: 18px;
-    color: #333;
+    font-size: 20px;
+    color: #ffffff;
     line-height: 1.4;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
 .promotion-tag {
     display: inline-block;
-    padding: 2px 6px;
-    background: linear-gradient(90deg,#ff5000,#ff8000);
+    padding: 4px 10px;
+    background: linear-gradient(90deg, #4361ee, #4cc9f0);
     color: white;
-    border-radius: 2px;
+    border-radius: 20px;
     font-size: 12px;
     margin-right: 8px;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
 }
 .promotion-text {
-    font-size: 14px;
-    color: #ff5000;
-    margin: 8px 0;
+    font-size: 15px;
+    color: #4cc9f0;
+    margin: 10px 0;
+    font-weight: 500;
 }
 
 /* 拼单列表 */
 .group-list {
     margin: 15px;
-    background: white;
-    border-radius: 8px;
-    padding: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background: rgba(30, 30, 46, 0.8);
+    border-radius: 16px;
+    padding: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 .group-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid #eee;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+.group-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 .group-item:last-child {
     border-bottom: none;
+}
+.group-item.my-group {
+    background: rgba(67, 97, 238, 0.1);
+    border-radius: 12px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-left: 4px solid #4361ee;
+}
+.group-item-left {
+    flex: 1;
+}
+.user-list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+    position: relative;
+}
+.user-item {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 4px 8px;
+}
+.user-avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4cc9f0, #4361ee);
+    margin-right: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: white;
+    font-weight: bold;
+}
+.user-id {
+    font-size: 12px;
+    color: #ffffff;
+}
+.more-users {
+    background: rgba(76, 201, 240, 0.2);
+    color: #4cc9f0;
+    font-weight: bold;
+}
+.my-team-tag {
+    background: #4361ee;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 8px;
+    font-weight: 600;
 }
 .group-status {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 12px;
-    color: #999;
-    margin-top: 4px;
+    font-size: 13px;
+    color: #b0b0b0;
 }
 .countdown {
-    color: #ff5000;
-    font-weight: bold;
+    color: #4cc9f0;
+    font-weight: 700;
+    background: rgba(76, 201, 240, 0.1);
+    padding: 4px 8px;
+    border-radius: 6px;
 }
 .right {
     display: flex;
@@ -111,33 +194,34 @@ body {
     align-items: flex-end;
     gap: 4px;
 }
-.user-info {
-    font-size: 14px;
-    color: #333;
-}
-.group-status {
-    font-size: 12px;
-    color: #999;
-    margin-top: 4px;
-}
 .group-btn {
-    background: #ff5000;
+    background: linear-gradient(90deg, #4361ee, #4cc9f0);
     color: white;
     border: none;
-    padding: 8px 20px;
-    border-radius: 15px;
+    padding: 10px 20px;
+    border-radius: 20px;
     font-size: 14px;
     cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
 }
-.countdown {
-    font-size: 14px;
-    color: #ff5000;
+.group-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(67, 97, 238, 0.5);
+}
+.group-btn.my-group-btn {
+    background: linear-gradient(90deg, #f72585, #b5179e);
+    box-shadow: 0 4px 15px rgba(247, 37, 133, 0.3);
+}
+.group-btn.my-group-btn:hover {
+    box-shadow: 0 6px 20px rgba(247, 37, 133, 0.5);
 }
 
 /* 价格区域 */
 .area {
     padding: 30px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 .original-price {
     font-size: 14px;
@@ -147,7 +231,7 @@ body {
 }
 .discount-price {
     font-size: 24px;
-    color: #ff5000;
+    color: #4cc9f0;
     font-weight: bold;
 }
 
@@ -157,92 +241,139 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    background: white;
-    padding: 10px 15px;
+    background: rgba(30, 30, 46, 0.95);
+    padding: 15px;
     display: flex;
-    gap: 10px;
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+    gap: 15px;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 .action-btn {
     flex: 1;
-    padding: 12px;
+    padding: 16px;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     font-size: 16px;
     cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
 }
 .buy-alone {
-    background: #ffece5;
-    color: #ff5000;
+    background: rgba(255, 255, 255, 0.1);
+    color: #4cc9f0;
+    border: 1px solid rgba(76, 201, 240, 0.3);
+}
+.buy-alone:hover {
+    background: rgba(76, 201, 240, 0.1);
+    transform: translateY(-2px);
 }
 .group-buy {
-    background: linear-gradient(90deg,#ff5000,#ff8000);
+    background: linear-gradient(90deg, #4361ee, #4cc9f0);
     color: white;
+    box-shadow: 0 4px 15px rgba(67, 97, 238, 0.4);
+}
+.group-buy:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(67, 97, 238, 0.6);
 }
 
 /* 支付弹窗样式 */
 .modal {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
 }
 
 .modal-content {
-  background-color: #fefefe;
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
-  max-width: 400px;
-  text-align: center;
-  border-radius: 5px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    margin: 15% auto;
+    padding: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 80%;
+    max-width: 400px;
+    text-align: center;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    color: #e6e6e6;
+}
+
+.modal-content h2 {
+    color: #4cc9f0;
+    margin-bottom: 10px;
+    font-weight: 600;
 }
 
 .qr-code {
-  width: 200px;
-  height: 200px;
-  margin: 20px 0;
+    width: 200px;
+    height: 200px;
+    margin: 20px 0;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
 .button-group {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
 }
 
 .button-group button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 
 #cancelPayment {
-  background-color: #f0f0f0;
-  color: #333;
+    background: rgba(255, 255, 255, 0.1);
+    color: #e6e6e6;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#cancelPayment:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 #completePayment {
-  background-color: #4caf50;
-  color: white;
+    background: linear-gradient(90deg, #4361ee, #4cc9f0);
+    color: white;
+    box-shadow: 0 4px 15px rgba(67, 97, 238, 0.4);
+}
+
+#completePayment:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(67, 97, 238, 0.6);
 }
 
 /* 空状态提示 */
 .group-item.empty-tips {
     text-align: center;
-    padding: 20px;
-    background: #f8f8f8;
-    border-radius: 8px;
-    margin: 10px;
+    padding: 30px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    margin: 10px 0;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
 }
 
 .tips-content {
-    color: #666;
-    font-size: 14px;
-    letter-spacing: 1px;
+    color: #b0b0b0;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+}
+
+/* 添加CSS动画 */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
 }

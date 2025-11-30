@@ -69,7 +69,7 @@ public class MarketIndexServiceController implements IMarketIndexService {
             List<GoodsMarketResponseDTO.Team>teamList=new ArrayList<GoodsMarketResponseDTO.Team>();
             for(UserGroupBuyOrderDetailEntity userGroupBuyOrderDetailEntity:userGroupBuyOrderDetailEntities){
                 GoodsMarketResponseDTO.Team team=GoodsMarketResponseDTO.Team.builder()
-                        .userId(userGroupBuyOrderDetailEntity.getUserId())
+                        .userIds(userGroupBuyOrderDetailEntity.getUserIds())
                         .teamId(userGroupBuyOrderDetailEntity.getTeamId())
                         .activityId(activityId)
                         .targetCount(userGroupBuyOrderDetailEntity.getTargetCount())

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 @Data
 @Builder
@@ -48,8 +49,8 @@ public class GoodsMarketResponseDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Team {
-        // 用户ID
-        private String userId;
+        // NOTE一个team下可以有多个用户，所以这里应该是list
+        private List<String> userIds;
         // 拼单组队ID
         private String teamId;
         // 活动ID
@@ -85,7 +86,7 @@ public class GoodsMarketResponseDTO {
             long hours = TimeUnit.MILLISECONDS.toHours(diffInMilliseconds) % 24;
             long days = TimeUnit.MILLISECONDS.toDays(diffInMilliseconds);
 
-            return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+            return java.lang.String.format("%02d:%02d:%02d", hours, minutes, seconds);
         }
 
     }

@@ -142,6 +142,11 @@ public class IActivityRepositoryImpl implements IActivityRepository {
         groupBuyOrderListReq.setCount(userSelfGroupNo);
         List<GroupBuyOrderList> userGroupBuyOrderList = groupBuyOrderListDao.queryInProgressUserGroupBuyOrderDetailListByUserId(groupBuyOrderListReq);
         if (null == userGroupBuyOrderList || userGroupBuyOrderList.isEmpty()) return null;
+        //NOTE提前将用户参与的teamId和OutTradeNo匹配好
+        Map<String,String> teamOutTradeNoMap=new HashMap<>();
+        for(GroupBuyOrderList groupBuyOrderList : userGroupBuyOrderList) {
+            teamOutTradeNoMap.put(groupBuyOrderList.getTeamId(),groupBuyOrderList.getOutTradeNo());
+        }
         //过滤队伍获取Id
         Set<String> teamIds = userGroupBuyOrderList.stream().map(GroupBuyOrderList::getTeamId).
                 filter(teamId -> teamId != null && !teamId.isEmpty()).collect(Collectors.toSet());
@@ -153,26 +158,28 @@ public class IActivityRepositoryImpl implements IActivityRepository {
         Map<String, GroupBuyOrder> groupBuyOrderMap = userGroupBuyOrder.stream()
                 .collect(Collectors.toMap(GroupBuyOrder::getTeamId, order -> order));
         //将用户自己参与的拼团信息组合
-        for (GroupBuyOrderList orderlist : userGroupBuyOrderList) {
-            GroupBuyOrder groupBuyOrder = groupBuyOrderMap.get(orderlist.getTeamId());
+        for (String teamId : teamIds) {
+            List<String>userIdList=groupBuyOrderListDao.queryUserIdsByTeamId(teamId);
+            GroupBuyOrder groupBuyOrder = groupBuyOrderMap.get(teamId);
             if (null == groupBuyOrder) continue;
             UserGroupBuyOrderDetailEntity userGroupBuyOrderDetailEntity = new UserGroupBuyOrderDetailEntity();
-            userGroupBuyOrderDetailEntity.setUserId(userId);
-            userGroupBuyOrderDetailEntity.setTeamId(orderlist.getTeamId());
+            userGroupBuyOrderDetailEntity.setUserIds(userIdList);
+            userGroupBuyOrderDetailEntity.setTeamId(groupBuyOrder.getTeamId());
             userGroupBuyOrderDetailEntity.setTargetCount(groupBuyOrder.getTargetCount());
-            userGroupBuyOrderDetailEntity.setActivityId(orderlist.getActivityId());
+            userGroupBuyOrderDetailEntity.setActivityId(groupBuyOrder.getActivityId());
             userGroupBuyOrderDetailEntity.setCompleteCount(groupBuyOrder.getCompleteCount());
             userGroupBuyOrderDetailEntity.setLockCount(groupBuyOrder.getLockCount());
             userGroupBuyOrderDetailEntity.setValidEndTime(groupBuyOrder.getValidEndTime());
             userGroupBuyOrderDetailEntity.setValidStartTime(groupBuyOrder.getValidStartTime());
-            userGroupBuyOrderDetailEntity.setOutTradeNo(orderlist.getOutTradeNo());
+            userGroupBuyOrderDetailEntity.setOutTradeNo(teamOutTradeNoMap.get(teamId));
             userGroupBuyOrderDetailEntities.add(userGroupBuyOrderDetailEntity);
         }
         return userGroupBuyOrderDetailEntities;
     }
 
     @Override
-    public List<UserGroupBuyOrderDetailEntity> queryInProgressUserGroupBuyOrderDetailListByRandom(Long activityId, String userId, int randomGroupNo) {
+    public List<UserGroupBuyOrderDetailEntity> queryInProgressUserGroupBuyOrderDetailListByRandom(List<UserGroupBuyOrderDetailEntity>userGroupBuyOrderDetailEntityList,Long activityId,
+                                                                                                  String userId, int randomGroupNo) {
         GroupBuyOrderList groupBuyOrderListReq = new GroupBuyOrderList();
         groupBuyOrderListReq.setActivityId(activityId);
         groupBuyOrderListReq.setUserId(userId);
@@ -186,9 +193,14 @@ public class IActivityRepositoryImpl implements IActivityRepository {
             // 获取前 randomCount 个元素
             randomGroupBuyOrderList = randomGroupBuyOrderList.subList(0, randomGroupNo);
         }
+        //NOTE获取当前用户自己参与的teamID防止重复
+        Set<String> teamIdsSelf = userGroupBuyOrderDetailEntityList.stream().map(UserGroupBuyOrderDetailEntity::getTeamId).
+                filter(teamId -> teamId != null && !teamId.isEmpty()).collect(Collectors.toSet());
         //过滤队伍获取teamId
         Set<String> teamIds = randomGroupBuyOrderList.stream().map(GroupBuyOrderList::getTeamId).
-                filter(teamId -> teamId != null && !teamId.isEmpty()).collect(Collectors.toSet());
+                filter(teamId -> teamId != null && !teamId.isEmpty()&&!teamIdsSelf.contains(teamId)).collect(Collectors.toSet());
+        //NOTE如果除了用户自己以外没有别的拼团了那么直接返回空防止sql语句异常
+        if(teamIds.isEmpty()) return null;
         //根据teamId查询存在的拼团
         List<GroupBuyOrder> randomGroupBuyOrder = groupBuyOrderDao.queryInProgressGroupByTeamIds(teamIds);
         if (null == randomGroupBuyOrder || randomGroupBuyOrder.isEmpty()) return null;
@@ -197,14 +209,15 @@ public class IActivityRepositoryImpl implements IActivityRepository {
         Map<String, GroupBuyOrder> groupBuyOrderMap = randomGroupBuyOrder.stream()
                 .collect(Collectors.toMap(GroupBuyOrder::getTeamId, order -> order));
         //将存在的拼团信息组合
-        for (GroupBuyOrderList orderlist : randomGroupBuyOrderList) {
-            GroupBuyOrder groupBuyOrder = groupBuyOrderMap.get(orderlist.getTeamId());
+        for (String teamId : teamIds) {
+            GroupBuyOrder groupBuyOrder = groupBuyOrderMap.get(teamId);
+            List<String>userIdList=groupBuyOrderListDao.queryUserIdsByTeamId(teamId);
             if (null == groupBuyOrder) continue;
             UserGroupBuyOrderDetailEntity userGroupBuyOrderDetailEntity = new UserGroupBuyOrderDetailEntity();
-            userGroupBuyOrderDetailEntity.setUserId(orderlist.getUserId());
-            userGroupBuyOrderDetailEntity.setTeamId(orderlist.getTeamId());
+            userGroupBuyOrderDetailEntity.setUserIds(userIdList);
+            userGroupBuyOrderDetailEntity.setTeamId(teamId);
             userGroupBuyOrderDetailEntity.setTargetCount(groupBuyOrder.getTargetCount());
-            userGroupBuyOrderDetailEntity.setActivityId(orderlist.getActivityId());
+            userGroupBuyOrderDetailEntity.setActivityId(groupBuyOrder.getActivityId());
             userGroupBuyOrderDetailEntity.setCompleteCount(groupBuyOrder.getCompleteCount());
             userGroupBuyOrderDetailEntity.setLockCount(groupBuyOrder.getLockCount());
             userGroupBuyOrderDetailEntity.setValidEndTime(groupBuyOrder.getValidEndTime());

@@ -85,6 +85,9 @@
         where activity_id = #{activityId} and status in (0, 1)
 
     </select>
+    <select id="queryUserIdsByTeamId" parameterType="java.lang.String" resultType="java.lang.String">
+        select user_id from group_buy_order_list where team_id = #{teamId} and status in(0,1)
+    </select>
 
 
 

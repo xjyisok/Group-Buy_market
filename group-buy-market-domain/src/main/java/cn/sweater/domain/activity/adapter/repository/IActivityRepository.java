@@ -23,7 +23,7 @@ public interface IActivityRepository {
 
     List<UserGroupBuyOrderDetailEntity> queryInProgressUserGroupBuyOrderDetailListByOwner(Long activityId, String userId, int userSelfGroupNo);
 
-    List<UserGroupBuyOrderDetailEntity> queryInProgressUserGroupBuyOrderDetailListByRandom(Long activityId, String userId, int userSelfGroupNo);
+    List<UserGroupBuyOrderDetailEntity> queryInProgressUserGroupBuyOrderDetailListByRandom(List<UserGroupBuyOrderDetailEntity>userGroupBuyOrderDetailEntities,Long activityId, String userId, int userSelfGroupNo);
 
     TeamStatisticVO quertTeamStatisticByActivtiyId(Long activityId);
 }

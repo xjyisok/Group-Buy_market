@@ -40,7 +40,7 @@ public class IIndexGroupBuyMarketServiceImpl implements IIndexGroupBuyMarketServ
             }
         }
         if(otherGroupNo!=0){
-            List<UserGroupBuyOrderDetailEntity>randomTeamList=activityRepository.queryInProgressUserGroupBuyOrderDetailListByRandom(activityId,userId,otherGroupNo);
+            List<UserGroupBuyOrderDetailEntity>randomTeamList=activityRepository.queryInProgressUserGroupBuyOrderDetailListByRandom(unionAllTeam,activityId,userId,otherGroupNo);
             //System.out.println(JSON.toJSONString(randomTeamList));
             if(null!=randomTeamList && !randomTeamList.isEmpty()) {
                 unionAllTeam.addAll(randomTeamList);
