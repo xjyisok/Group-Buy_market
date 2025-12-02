@@ -56,6 +56,8 @@ public class ITradeRepositoryImpl implements ITradeRepository {
                 .orderId(groupBuyOrderListRes.getOrderId())
                 .deductionPrice(groupBuyOrderListRes.getDeductionPrice())
                 .tradeOrderStatusEnumVO(TradeOrderStatusEnumVO.valueOf(groupBuyOrderListRes.getStatus()))
+                .payPrice(groupBuyOrderListRes.getPayPrice())
+                .originalPrice(groupBuyOrderListRes.getOriginalPrice())
                 .build();
     }
 
@@ -124,6 +126,7 @@ public class ITradeRepositoryImpl implements ITradeRepository {
                 .channel(payDiscountEntity.getChannel())
                 .originalPrice(payDiscountEntity.getOriginalPrice())
                 .deductionPrice(payDiscountEntity.getDeductionPrice())
+                .payPrice(payDiscountEntity.getPayPrice())
                 .status(TradeOrderStatusEnumVO.CREATE.getCode())
                 .outTradeNo(payDiscountEntity.getOutTradeNo())
                 .bizId(payActivityEntity.getActivityId()+ Constants.UNDERLINE+userEntity.getUserId()+Constants.UNDERLINE+(userTakeOrderCount+1))
@@ -138,6 +141,8 @@ public class ITradeRepositoryImpl implements ITradeRepository {
                 .orderId(orderId)
                 .deductionPrice(payDiscountEntity.getOriginalPrice())
                 .tradeOrderStatusEnumVO(TradeOrderStatusEnumVO.CREATE)
+                .payPrice(payDiscountEntity.getPayPrice())
+                .originalPrice(payDiscountEntity.getOriginalPrice())
                 .build();
     }
 

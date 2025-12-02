@@ -91,6 +91,7 @@ public class MarketIndexServiceController implements IMarketIndexService {
                     .allTeamUserCount(teamStatisticVO.getAllTeamUserCount())
                     .build();
             goodsMarketResponseDTO.setTeamStatistic(teamStatistic);
+            goodsMarketResponseDTO.setActivityId(activityId);
             Response<GoodsMarketResponseDTO>response=Response.<GoodsMarketResponseDTO>builder()
                     .code(ResponseCode.SUCCESS.getCode())
                     .info(ResponseCode.SUCCESS.getInfo())

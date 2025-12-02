@@ -39,8 +39,11 @@ public class TagNode  extends AbstractGroupBuyMarketSupport<MarketProductEntity,
         System.out.println(isEnable);
         System.out.println(tagId+":"+requestParameter.getUserId());
         boolean isWithin=activityRepository.isWithinRange(requestParameter.getUserId(),tagId);
-        dynamicContext.setIsVisible(isVisible||isWithin);
-        dynamicContext.setIsEnable(isEnable||isWithin);
+        //NOTE暂时全部设置为true
+        //dynamicContext.setIsVisible(isVisible||isWithin);
+        //dynamicContext.setIsEnable(isEnable||isWithin);
+        dynamicContext.setIsVisible(true);
+        dynamicContext.setIsEnable(true);
         return router(requestParameter, dynamicContext);
     }
 }

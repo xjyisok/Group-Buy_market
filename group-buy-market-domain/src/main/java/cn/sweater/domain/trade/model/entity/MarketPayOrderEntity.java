@@ -30,5 +30,9 @@ public class MarketPayOrderEntity {
      * 交易订单状态枚举
      */
     private TradeOrderStatusEnumVO tradeOrderStatusEnumVO;
+    /** 原始价格 */
+    private BigDecimal originalPrice;
+    /** 支付价格 */
+    private BigDecimal payPrice;
 }
 

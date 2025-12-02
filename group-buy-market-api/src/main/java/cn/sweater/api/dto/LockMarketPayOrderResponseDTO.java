@@ -18,5 +18,9 @@ public class LockMarketPayOrderResponseDTO {
     private BigDecimal deductionPrice;
     /**交易订单状态*/
     private Integer tradeOrderStatus;
+    /** 原始价格 */
+    private BigDecimal originalPrice;
+    /** 支付价格 */
+    private BigDecimal payPrice;
 
 }
