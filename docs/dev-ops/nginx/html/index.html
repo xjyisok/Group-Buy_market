@@ -185,8 +185,14 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         // 根据测试诉求，设置基础地址
-        var sPayMallUrl = "http://127.0.0.1:9091";
-        var groupBuyMarketUrl = "http://127.0.0.1:8092";
+        var sPayMallUrl = "http://127.0.0.1:8080";
+        var groupBuyMarketUrl = "http://127.0.0.1:8091";
+        //NOTE公网部署的时候改成注释的
+        /**
+         var sPayMallUrl = "http://127.0.0.1:80";
+         var groupBuyMarketUrl = "http://127.0.0.1:9091";
+         */
+
         var goodsId = "9890001";
 
         // 获取信息
