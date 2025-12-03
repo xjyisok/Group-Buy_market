@@ -15,7 +15,7 @@ services:
     privileged: true
   # 部署后端项目 - 小型支付商城
   s-pay-mall-app:
-    image: sweaterxjy/small-paymall-ddd-app:2.0-SNAPSHOT
+    image: sweaterxjy/s-pay-mall-ddd-app:2.0-SNAPSHOT
     container_name: s-pay-mall-app
     restart: on-failure
     ports:
@@ -23,10 +23,10 @@ services:
     environment:
       - TZ=PRC
       - SERVER_PORT=8080
-      - APP_CONFIG_GROUP_BUY_MARKET_API_URL=http://group-buy-market-app:8092
-      - APP_CONFIG_GROUP_BUY_MARKET_NOTIFY_URL=http://s-pay-mall-app:8080/api/v1/alipay/group_buy_notify
+      - APP_CONFIG_GROUP_BUY_MARKET_API_URL=http://127.0.0.1
+      - APP_CONFIG_GROUP_BUY_MARKET_NOTIFY_URL=http://127.0.0.1/api/v1/alipay/group_buy_notify
       - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=123456
+      - SPRING_DATASOURCE_PASSWORD=b8B6llKKoo00oo00Il__
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/s-pay-mall?serverTimezone=UTC&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Shanghai
       - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
       - SPRING_HIKARI_POOL_NAME=Retail_HikariCP
@@ -36,7 +36,7 @@ services:
       - WEIXIN_CONFIG_APP_SECRET=2780faaf8a1699f716dec1ed18c522e5
       - WEIXIN_CONFIG_TEMPLATE_ID=QnFgrAWmDLGzWBX4t_XYVjsVYJs3VY-ABZ1JrY2Ia7g
       - ALIPAY_NOTIFY_URL=http://sweater-smarket.natapp1.cc/api/v1/alipay/alipay_notify_url
-      - ALIPAY_RETURN_URL=https://gaga.plus
+      - ALIPAY_RETURN_URL=http://127.0.0.1
     volumes:
       - ./log:/data/log
     logging:
@@ -56,10 +56,10 @@ services:
     container_name: group-buy-market-app
     restart: on-failure
     ports:
-      - "8092:8092"
+      - "8091:8091"
     environment:
       - TZ=PRC
-      - SERVER_PORT=8092
+      - SERVER_PORT=8091
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=123456
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/group_buy_market?serverTimezone=UTC&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Shanghai
