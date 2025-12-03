@@ -25,7 +25,7 @@ public class GroupBuyNotifyService {
                     .addHeader("content-type", "application/json")
                     .build();
 
-            Response response = okHttpClient.newCall(request).execute();
+            Response response = okHttpClient.newCall(request).execute();//NOTE这里是对小型支付商城的回调
             return response.body().string();
         }catch (Exception e) {
             throw new AppException(ResponseCode.HTTP_EXCEPTION.getCode(),ResponseCode.HTTP_EXCEPTION.getInfo());
