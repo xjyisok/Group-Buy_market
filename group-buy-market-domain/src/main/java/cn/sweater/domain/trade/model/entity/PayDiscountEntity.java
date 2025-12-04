@@ -1,5 +1,6 @@
 package cn.sweater.domain.trade.model.entity;
 
+import cn.sweater.domain.trade.model.valobj.NotifyConfigVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,7 +30,9 @@ public class PayDiscountEntity {
     private BigDecimal payPrice;
     /** 外部交易单号-确保外部调用唯一幂等 */
     private String outTradeNo;
-    /** 回调Url*/
-    private String notifyUrl;
+//    /** 回调Url*/
+//    private String notifyUrl;
+    /** 回调配置*/
+    private NotifyConfigVO notifyConfigVO;
 
 }

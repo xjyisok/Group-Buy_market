@@ -5,6 +5,8 @@ import cn.sweater.domain.trade.model.aggergate.GroupBuyOrderAggregate;
 import cn.sweater.domain.trade.model.aggergate.GroupBuyTeamSettlementAggregate;
 import cn.sweater.domain.trade.model.entity.*;
 import cn.sweater.domain.trade.model.valobj.GroupBuyProgressVO;
+import cn.sweater.domain.trade.model.valobj.NotifyConfigVO;
+import cn.sweater.domain.trade.model.valobj.NotifyTypeEnumVO;
 import cn.sweater.domain.trade.model.valobj.TradeOrderStatusEnumVO;
 import cn.sweater.infrastructure.dao.IGroupBuyActivityDao;
 import cn.sweater.infrastructure.dao.IGroupBuyOrderDao;
@@ -23,6 +25,7 @@ import cn.sweater.types.exception.AppException;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +45,8 @@ public class ITradeRepositoryImpl implements ITradeRepository {
     INotifyTaskDao notifyTaskDao;
     @Resource
     DCCService dccService;
+    @Value("${spring.rabbitmq.config.producer.topic_team_success.routing_key}")
+    private String topic_team_success;
     @Override
     public MarketPayOrderEntity queryNoPayMarketPayOrderByOutTradeNo(String userId, String outTradeNo) {
         GroupBuyOrderList groupBuyOrderList = new GroupBuyOrderList();
@@ -102,8 +107,9 @@ public class ITradeRepositoryImpl implements ITradeRepository {
                     .validStartTime(currentTime)//NOTE:当前拼团单开始时间
                     .validEndTime(calendar.getTime())// NOTE:当前拼团单结束时间
                     .lockCount(1)
-                    .notifyUrl(payDiscountEntity.getNotifyUrl())
+                    .notifyUrl(payDiscountEntity.getNotifyConfigVO().getNotifyUrl())
                     .status(0)
+                    .notifyType(payDiscountEntity.getNotifyConfigVO().getNotifyType().getCode())
                     .build();
             groupBuyOrderDao.insert(groupBuyOrder);
         }
@@ -188,7 +194,11 @@ public class ITradeRepositoryImpl implements ITradeRepository {
                 .status(GroupBuyOrderEnumVO.valueOf(groupBuyOrder.getStatus()))
                 .validStartTime(groupBuyOrder.getValidStartTime())
                 .validEndTime(groupBuyOrder.getValidEndTime())
-                .notifyUrl(groupBuyOrder.getNotifyUrl())
+                .notifyConfig(NotifyConfigVO.builder()
+                        .notifyUrl(groupBuyOrder.getNotifyUrl())
+                        .notifyType(NotifyTypeEnumVO.valueOf(groupBuyOrder.getNotifyType()))
+                        .notifyMQ(topic_team_success)
+                        .build())
                 .build();
 
     }
@@ -225,9 +235,13 @@ public class ITradeRepositoryImpl implements ITradeRepository {
             NotifyTask notifyTask = new NotifyTask();
             notifyTask.setActivityId(groupBuyTeamEntity.getActivityId());
             notifyTask.setTeamId(groupBuyTeamEntity.getTeamId());
-            notifyTask.setNotifyUrl(groupBuyTeamEntity.getNotifyUrl());
+            notifyTask.setNotifyUrl(NotifyTypeEnumVO.HTTP.equals(groupBuyTeamEntity.getNotifyConfig().getNotifyType()) ?
+                    groupBuyTeamEntity.getNotifyConfig().getNotifyUrl() : null);
             notifyTask.setNotifyCount(0);
             notifyTask.setNotifyStatus(0);
+            notifyTask.setNotifyType(groupBuyTeamEntity.getNotifyConfig().getNotifyType().getCode());
+            notifyTask.setNotifyMQ(NotifyTypeEnumVO.MQ.equals(groupBuyTeamEntity.getNotifyConfig().getNotifyType()) ?
+                    groupBuyTeamEntity.getNotifyConfig().getNotifyMQ() : null);
             notifyTask.setParameterJson(JSON.toJSONString(new HashMap<String, Object>() {{
                 put("teamId", groupBuyTeamEntity.getTeamId());
                 put("outTradeNoList", outTradeNoList);
@@ -293,6 +307,8 @@ public class ITradeRepositoryImpl implements ITradeRepository {
                     .notifyUrl(notifyTask.getNotifyUrl())
                     .notifyCount(notifyTask.getNotifyCount())
                     .parameterJson(notifyTask.getParameterJson())
+                    .notifyMQ(notifyTask.getNotifyMQ())
+                    .notifyType(notifyTask.getNotifyType())
                     .build();
 
             notifyTaskEntities.add(notifyTaskEntity);

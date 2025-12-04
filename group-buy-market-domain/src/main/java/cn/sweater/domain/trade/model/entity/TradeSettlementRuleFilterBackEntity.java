@@ -1,5 +1,6 @@
 package cn.sweater.domain.trade.model.entity;
 
+import cn.sweater.domain.trade.model.valobj.NotifyConfigVO;
 import cn.sweater.types.enums.GroupBuyOrderEnumVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +31,6 @@ public class TradeSettlementRuleFilterBackEntity {
     /** 拼团结束时间 - 拼团有效时长 */
     private Date validEndTime;
     /** 回调Url*/
-    private String notifyUrl;
+    private NotifyConfigVO notifyConfigVO;
 
 }

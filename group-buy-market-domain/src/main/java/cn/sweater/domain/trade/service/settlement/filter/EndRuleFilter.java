@@ -4,6 +4,7 @@ import cn.sweater.domain.trade.model.entity.GroupBuyTeamEntity;
 import cn.sweater.domain.trade.model.entity.MarketPayOrderEntity;
 import cn.sweater.domain.trade.model.entity.TradeSettlementRuleCommandEntity;
 import cn.sweater.domain.trade.model.entity.TradeSettlementRuleFilterBackEntity;
+import cn.sweater.domain.trade.model.valobj.NotifyConfigVO;
 import cn.sweater.domain.trade.service.settlement.factory.TradeSettlementRuleFilterFactory;
 import cn.sweater.types.design.framework.link.model2.handler.ILogicHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,11 @@ public class EndRuleFilter implements ILogicHandler<TradeSettlementRuleCommandEn
                 .status(groupBuyTeamEntity.getStatus())
                 .validEndTime(groupBuyTeamEntity.getValidEndTime())
                 .validStartTime(groupBuyTeamEntity.getValidStartTime())
-                .notifyUrl(groupBuyTeamEntity.getNotifyUrl())
+                .notifyConfigVO(NotifyConfigVO.builder()
+                        .notifyMQ(groupBuyTeamEntity.getNotifyConfig().getNotifyMQ())
+                        .notifyUrl(groupBuyTeamEntity.getNotifyConfig().getNotifyUrl())
+                        .notifyType(groupBuyTeamEntity.getNotifyConfig().getNotifyType())
+                        .build())
                 .build();
     }
 }

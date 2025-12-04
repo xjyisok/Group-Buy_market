@@ -12,6 +12,8 @@ import cn.sweater.domain.activity.model.valobj.GroupBuyActivityDiscountVO;
 import cn.sweater.domain.activity.service.trial.IIndexGroupBuyMarketService;
 import cn.sweater.domain.trade.model.entity.*;
 import cn.sweater.domain.trade.model.valobj.GroupBuyProgressVO;
+import cn.sweater.domain.trade.model.valobj.NotifyConfigVO;
+import cn.sweater.domain.trade.model.valobj.NotifyTypeEnumVO;
 import cn.sweater.domain.trade.service.ITradeOrderService;
 import cn.sweater.domain.trade.service.ITradeSettlementOrderService;
 import cn.sweater.types.enums.ResponseCode;
@@ -49,12 +51,13 @@ public class MarketTradeServiceController implements IMarketTradeServiceApi {
             Long activityId = lockMarketPayOrderRequestDTO.getActivityId();
             String outTradeNo = lockMarketPayOrderRequestDTO.getOutTradeNo();
             String teamId = lockMarketPayOrderRequestDTO.getTeamId();
-            String notifyUrl = lockMarketPayOrderRequestDTO.getNotifyUrl();
+            LockMarketPayOrderRequestDTO.NotifyConfigVO notifyConfigVO = lockMarketPayOrderRequestDTO.getNotifyConfigVO();
 
             log.info("营销交易锁单:{} LockMarketPayOrderRequestDTO:{}", userId, JSON.toJSONString(lockMarketPayOrderRequestDTO));
 
-            if (StringUtils.isBlank(userId) || StringUtils.isBlank(source) || StringUtils.isBlank(channel) || StringUtils.isBlank(goodsId) || StringUtils.isBlank(goodsId) || null == activityId
-            ||null==notifyUrl) {
+            if (StringUtils.isBlank(userId) || StringUtils.isBlank(source) || StringUtils.isBlank(channel) || StringUtils.isBlank(goodsId)
+                    || StringUtils.isBlank(goodsId) || null == activityId||("HTTP".equals(notifyConfigVO.getNotifyType()) && StringUtils.isBlank(notifyConfigVO.getNotifyUrl()))
+            ) {
                 return Response.<LockMarketPayOrderResponseDTO>builder()
                         .code(ResponseCode.ILLEGAL_PARAMETER.getCode())
                         .info(ResponseCode.ILLEGAL_PARAMETER.getInfo())
@@ -130,7 +133,11 @@ public class MarketTradeServiceController implements IMarketTradeServiceApi {
                             .payPrice(trialBalanceEntity.getPayPrice())
                             .deductionPrice(trialBalanceEntity.getDeductionPrice())
                             .outTradeNo(outTradeNo)
-                            .notifyUrl(notifyUrl)
+                            .notifyConfigVO(NotifyConfigVO.builder()
+                                    .notifyType(NotifyTypeEnumVO.valueOf(notifyConfigVO.getNotifyType()))
+                                    .notifyMQ(notifyConfigVO.getNotifyMQ())
+                                    .notifyUrl(notifyConfigVO.getNotifyUrl())
+                                    .build())
                             .build());
 
             log.info("交易锁单记录(新):{} marketPayOrderEntity:{}", userId, JSON.toJSONString(marketPayOrderEntity));

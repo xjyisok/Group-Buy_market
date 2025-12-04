@@ -48,5 +48,7 @@ public class GroupBuyOrder {
     private String notifyUrl;
     /** 更新时间 */
     private Date updateTime;
+    /** 回调配置*/
+    private String notifyType;
 
 }

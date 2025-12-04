@@ -32,8 +32,8 @@ public class TradeSettlementOrderServiceTest {
         TradePaySuccessEntity tradePaySuccessEntity = new TradePaySuccessEntity();
         tradePaySuccessEntity.setSource("s01");
         tradePaySuccessEntity.setChannel("c01");
-        tradePaySuccessEntity.setUserId("dsh");
-        tradePaySuccessEntity.setOutTradeNo("423448505165");
+        tradePaySuccessEntity.setUserId("xjy");
+        tradePaySuccessEntity.setOutTradeNo("127208480212");
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);

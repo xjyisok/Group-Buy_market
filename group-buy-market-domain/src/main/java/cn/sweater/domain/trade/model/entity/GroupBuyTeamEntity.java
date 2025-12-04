@@ -1,5 +1,6 @@
 package cn.sweater.domain.trade.model.entity;
 
+import cn.sweater.domain.trade.model.valobj.NotifyConfigVO;
 import cn.sweater.types.enums.GroupBuyOrderEnumVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +31,6 @@ public class GroupBuyTeamEntity {
     private Date validEndTime;
     /** 状态（0-拼单中、1-完成、2-失败） */
     private GroupBuyOrderEnumVO status;
-    /** 回调Url*/
-    private String notifyUrl;
+    /**回调配置*/
+    private NotifyConfigVO notifyConfig;
 }

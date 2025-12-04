@@ -2,6 +2,8 @@ package cn.sweater.infrastructure.adapter.port;
 
 import cn.sweater.domain.trade.adapter.port.ITradePort;
 import cn.sweater.domain.trade.model.entity.NotifyTaskEntity;
+import cn.sweater.domain.trade.model.valobj.NotifyTypeEnumVO;
+import cn.sweater.infrastructure.event.EventPublisher;
 import cn.sweater.infrastructure.gateway.GroupBuyNotifyService;
 import cn.sweater.infrastructure.redis.IRedisService;
 import cn.sweater.types.enums.NotifyTaskHttpEnumVO;
@@ -18,16 +20,24 @@ public class TradePortImpl implements ITradePort {
     private GroupBuyNotifyService groupBuyNotifyService;
     @Resource
     private IRedisService redisService;
+    @Resource
+    private EventPublisher publisher;
     @Override
     public String groupBuyNotify(NotifyTaskEntity notifyTask) throws Exception {
         RLock lock=redisService.getLock(notifyTask.lockKey());
         try{
             if(lock.tryLock(3,0, TimeUnit.SECONDS)){
                 try{
-                    if(StringUtils.isBlank(notifyTask.getNotifyUrl())||notifyTask.getNotifyUrl().equals("暂无")){
+                    if(notifyTask.getNotifyType().equals(NotifyTypeEnumVO.HTTP.getCode())) {
+                        if (StringUtils.isBlank(notifyTask.getNotifyUrl()) || notifyTask.getNotifyUrl().equals("暂无")) {
+                            return NotifyTaskHttpEnumVO.SUCCESS.getCode();
+                        }
+                        return groupBuyNotifyService.GroupBuyNotify(notifyTask.getNotifyUrl(), notifyTask.getParameterJson());
+                    }
+                    else if(notifyTask.getNotifyType().equals(NotifyTypeEnumVO.MQ.getCode())) {
+                        publisher.publish(notifyTask.getNotifyMQ(), notifyTask.getParameterJson());
                         return NotifyTaskHttpEnumVO.SUCCESS.getCode();
                     }
-                    return groupBuyNotifyService.GroupBuyNotify(notifyTask.getNotifyUrl(),notifyTask.getParameterJson());
                 }finally{
                     if(lock.isLocked()&&lock.isHeldByCurrentThread()){
                     lock.unlock();
