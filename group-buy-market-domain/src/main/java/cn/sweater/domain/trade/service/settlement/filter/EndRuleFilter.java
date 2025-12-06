@@ -1,12 +1,13 @@
 package cn.sweater.domain.trade.service.settlement.filter;
 
+import cn.bugstack.wrench.design.framework.link.model2.handler.ILogicHandler;
 import cn.sweater.domain.trade.model.entity.GroupBuyTeamEntity;
 import cn.sweater.domain.trade.model.entity.MarketPayOrderEntity;
 import cn.sweater.domain.trade.model.entity.TradeSettlementRuleCommandEntity;
 import cn.sweater.domain.trade.model.entity.TradeSettlementRuleFilterBackEntity;
 import cn.sweater.domain.trade.model.valobj.NotifyConfigVO;
 import cn.sweater.domain.trade.service.settlement.factory.TradeSettlementRuleFilterFactory;
-import cn.sweater.types.design.framework.link.model2.handler.ILogicHandler;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

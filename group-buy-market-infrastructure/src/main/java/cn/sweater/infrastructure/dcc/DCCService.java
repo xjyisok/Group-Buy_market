@@ -1,6 +1,7 @@
 package cn.sweater.infrastructure.dcc;
 
-import cn.sweater.types.annotations.DCCValue;
+
+import cn.bugstack.wrench.dynamic.config.center.types.annotations.DCCValue;
 import cn.sweater.types.common.Constants;
 import org.springframework.stereotype.Service;
 

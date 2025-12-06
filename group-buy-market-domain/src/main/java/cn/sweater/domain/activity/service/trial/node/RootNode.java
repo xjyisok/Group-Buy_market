@@ -1,10 +1,11 @@
 package cn.sweater.domain.activity.service.trial.node;
 
+import cn.bugstack.wrench.design.framework.tree.StrategyHandler;
 import cn.sweater.domain.activity.model.entity.MarketProductEntity;
 import cn.sweater.domain.activity.model.entity.TrialBalanceEntity;
 import cn.sweater.domain.activity.service.trial.AbstractGroupBuyMarketSupport;
 import cn.sweater.domain.activity.service.trial.factory.DefaultActivityStrategyFactory;
-import cn.sweater.types.design.framework.tree.StrategyHandler;
+
 import cn.sweater.types.enums.ResponseCode;
 import cn.sweater.types.exception.AppException;
 import com.alibaba.fastjson.JSON;
@@ -19,7 +20,7 @@ public class RootNode extends AbstractGroupBuyMarketSupport<MarketProductEntity,
     @Resource
     private SwitchNode switchNode;
     @Override
-    public TrialBalanceEntity doapply(MarketProductEntity requestParameter, DefaultActivityStrategyFactory.DynamicContext dynamicContext) throws Exception {
+    public TrialBalanceEntity doApply(MarketProductEntity requestParameter, DefaultActivityStrategyFactory.DynamicContext dynamicContext) throws Exception {
         log.info("拼团商品查询试算服务-RootNode userId:{} requestParameter:{}", requestParameter.getUserId(), JSON.toJSONString(requestParameter));
         if(requestParameter.getUserId()==null||requestParameter.getChannel()==null||requestParameter.getGoodsId()==null||requestParameter.getSource()==null){
             throw new AppException(ResponseCode.ILLEGAL_PARAMETER.getCode(),ResponseCode.ILLEGAL_PARAMETER.getInfo());

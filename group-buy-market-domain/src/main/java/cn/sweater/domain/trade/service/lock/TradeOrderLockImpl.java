@@ -1,12 +1,13 @@
 package cn.sweater.domain.trade.service.lock;
 
+import cn.bugstack.wrench.design.framework.link.model2.chain.BusinessLinkedList;
 import cn.sweater.domain.trade.adapter.repository.ITradeRepository;
 import cn.sweater.domain.trade.model.aggergate.GroupBuyOrderAggregate;
 import cn.sweater.domain.trade.model.entity.*;
 import cn.sweater.domain.trade.model.valobj.GroupBuyProgressVO;
 import cn.sweater.domain.trade.service.ITradeOrderService;
 import cn.sweater.domain.trade.service.lock.factory.TradeRuleFilterFactory;
-import cn.sweater.types.design.framework.link.model2.chain.BusinessLinkedList;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

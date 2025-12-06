@@ -1,12 +1,13 @@
 package cn.sweater.domain.activity.service.trial.node;
 
+import cn.bugstack.wrench.design.framework.tree.StrategyHandler;
 import cn.sweater.domain.activity.adapter.repository.IActivityRepository;
 import cn.sweater.domain.activity.model.entity.MarketProductEntity;
 import cn.sweater.domain.activity.model.entity.TrialBalanceEntity;
 import cn.sweater.domain.activity.model.valobj.GroupBuyActivityDiscountVO;
 import cn.sweater.domain.activity.service.trial.AbstractGroupBuyMarketSupport;
 import cn.sweater.domain.activity.service.trial.factory.DefaultActivityStrategyFactory;
-import cn.sweater.types.design.framework.tree.StrategyHandler;
+
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.StringUtils;
 
@@ -24,7 +25,7 @@ public class TagNode  extends AbstractGroupBuyMarketSupport<MarketProductEntity,
     }
 
     @Override
-    protected TrialBalanceEntity doapply(MarketProductEntity requestParameter, DefaultActivityStrategyFactory.DynamicContext dynamicContext) throws Exception {
+    protected TrialBalanceEntity doApply(MarketProductEntity requestParameter, DefaultActivityStrategyFactory.DynamicContext dynamicContext) throws Exception {
         GroupBuyActivityDiscountVO groupBuyActivityDiscountVO = dynamicContext.getGroupBuyActivityDiscountVO();
         String tagId = groupBuyActivityDiscountVO.getTagId();
         boolean isVisible = groupBuyActivityDiscountVO.isVisible();

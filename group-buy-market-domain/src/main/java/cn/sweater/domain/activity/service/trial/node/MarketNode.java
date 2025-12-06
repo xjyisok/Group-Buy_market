@@ -1,5 +1,6 @@
 package cn.sweater.domain.activity.service.trial.node;
 
+import cn.bugstack.wrench.design.framework.tree.StrategyHandler;
 import cn.sweater.domain.activity.model.entity.MarketProductEntity;
 import cn.sweater.domain.activity.model.entity.TrialBalanceEntity;
 import cn.sweater.domain.activity.model.valobj.GroupBuyActivityDiscountVO;
@@ -9,7 +10,7 @@ import cn.sweater.domain.activity.service.trial.AbstractGroupBuyMarketSupport;
 import cn.sweater.domain.activity.service.trial.factory.DefaultActivityStrategyFactory;
 import cn.sweater.domain.activity.service.trial.thread.QueryGroupBuyActivityDiscountVOThreadTask;
 import cn.sweater.domain.activity.service.trial.thread.QuerySkuVOFromDBThreadTask;
-import cn.sweater.types.design.framework.tree.StrategyHandler;
+
 import cn.sweater.types.enums.ResponseCode;
 import cn.sweater.types.exception.AppException;
 import com.alibaba.fastjson.JSON;
@@ -32,7 +33,7 @@ public class MarketNode extends AbstractGroupBuyMarketSupport<MarketProductEntit
     @Resource
     private Map<String,IDiscountPreCalculateService> discountPreCalculateServiceMap;
     @Override
-    public TrialBalanceEntity doapply(MarketProductEntity requestParameter, DefaultActivityStrategyFactory.DynamicContext dynamicContext) throws Exception {
+    public TrialBalanceEntity doApply(MarketProductEntity requestParameter, DefaultActivityStrategyFactory.DynamicContext dynamicContext) throws Exception {
         log.info("拼团商品查询试算服务-MarketNode userId:{} requestParameter:{}", requestParameter.getUserId(), JSON.toJSONString(requestParameter));
         if(dynamicContext.getGroupBuyActivityDiscountVO()==null){
             return router(requestParameter,dynamicContext);
@@ -67,7 +68,7 @@ public class MarketNode extends AbstractGroupBuyMarketSupport<MarketProductEntit
     }
 
     @Override
-    protected void multithread(MarketProductEntity requestParameter, DefaultActivityStrategyFactory.DynamicContext dynamicContext) throws ExecutionException, InterruptedException, TimeoutException {
+    protected void multiThread(MarketProductEntity requestParameter, DefaultActivityStrategyFactory.DynamicContext dynamicContext) throws ExecutionException, InterruptedException, TimeoutException {
 
         QueryGroupBuyActivityDiscountVOThreadTask queryGroupBuyActivityDiscountVOThreadTask=new QueryGroupBuyActivityDiscountVOThreadTask(requestParameter.getSource()
                 ,requestParameter.getChannel(),requestParameter.getGoodsId(),activityRepository);

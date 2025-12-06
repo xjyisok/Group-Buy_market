@@ -1,9 +1,10 @@
 package cn.sweater.test.types.rule01.factory;
 
+import cn.bugstack.wrench.design.framework.link.model1.ILogicLink;
 import cn.sweater.test.types.rule01.logic.RuleLogic101;
 import cn.sweater.test.types.rule01.logic.RuleLogic102;
 import cn.sweater.test.types.rule02.factory.Rule02TradeRuleFactory;
-import cn.sweater.types.design.framework.link.model1.ILogicLink;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

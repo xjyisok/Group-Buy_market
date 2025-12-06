@@ -1,10 +1,11 @@
 package cn.sweater.test.types.rule02.factory;
 
+import cn.bugstack.wrench.design.framework.link.model2.LinkArmory;
+import cn.bugstack.wrench.design.framework.link.model2.chain.BusinessLinkedList;
 import cn.sweater.test.types.rule02.logic.RuleLogic201;
 import cn.sweater.test.types.rule02.logic.RuleLogic202;
 import cn.sweater.test.types.rule02.logic.XxxResponse;
-import cn.sweater.types.design.framework.link.model2.LinkArmory;
-import cn.sweater.types.design.framework.link.model2.chain.BusinessLinkedList;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

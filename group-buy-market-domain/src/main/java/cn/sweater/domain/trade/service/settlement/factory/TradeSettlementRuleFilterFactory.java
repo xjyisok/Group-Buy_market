@@ -1,13 +1,14 @@
 package cn.sweater.domain.trade.service.settlement.factory;
 
+import cn.bugstack.wrench.design.framework.link.model2.LinkArmory;
+import cn.bugstack.wrench.design.framework.link.model2.chain.BusinessLinkedList;
 import cn.sweater.domain.trade.model.entity.*;
 import cn.sweater.domain.trade.service.lock.factory.TradeRuleFilterFactory;
 import cn.sweater.domain.trade.service.settlement.filter.EndRuleFilter;
 import cn.sweater.domain.trade.service.settlement.filter.OutTradeNORuleFilter;
 import cn.sweater.domain.trade.service.settlement.filter.SCRuleFilter;
 import cn.sweater.domain.trade.service.settlement.filter.SettableRuleFilter;
-import cn.sweater.types.design.framework.link.model2.LinkArmory;
-import cn.sweater.types.design.framework.link.model2.chain.BusinessLinkedList;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,10 +21,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class TradeSettlementRuleFilterFactory {
     @Bean(name = "tradeSettlementRuleFilter")
-    BusinessLinkedList<TradeSettlementRuleCommandEntity,TradeSettlementRuleFilterFactory.DynamicContext, TradeSettlementRuleFilterBackEntity>
+    BusinessLinkedList<TradeSettlementRuleCommandEntity, DynamicContext, TradeSettlementRuleFilterBackEntity>
     tradeSettlementRuleFilterFactory(SCRuleFilter scRuleFilter, OutTradeNORuleFilter outTradeNORuleFilter
             , SettableRuleFilter settableRuleFilter, EndRuleFilter endRuleFilter) {
-        LinkArmory<TradeSettlementRuleCommandEntity,TradeSettlementRuleFilterFactory.DynamicContext,TradeSettlementRuleFilterBackEntity>
+        LinkArmory<TradeSettlementRuleCommandEntity, DynamicContext,TradeSettlementRuleFilterBackEntity>
                 linkArmory=new LinkArmory<>("tradeSettlementRuleFilter",scRuleFilter,outTradeNORuleFilter,settableRuleFilter,endRuleFilter);
         return linkArmory.getLogicLink();
     }
