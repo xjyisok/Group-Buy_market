@@ -32,10 +32,8 @@ public class UserTakeLimitRuleFilter implements ILogicHandler<TradeLockRuleComma
             log.info("用户参与次数校验，已达可参与上限 activityId:{}", requestParameter.getActivityId());
             throw new AppException(ResponseCode.E0103.getCode());
         }
-
-        return TradeLockRuleFilterBackEntity.builder()
-                .userTakeOrderCount(count)
-                .build();
+        dynamicContext.setUserTakeOrderCount(count);
+        return next(requestParameter, dynamicContext);
     }
 
 }

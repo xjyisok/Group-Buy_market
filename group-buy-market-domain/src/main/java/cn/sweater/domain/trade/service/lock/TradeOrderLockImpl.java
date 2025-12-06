@@ -39,6 +39,7 @@ public class TradeOrderLockImpl implements ITradeOrderService {
         TradeLockRuleFilterBackEntity tradeLockRuleFilterBackEntity =tradeRuleFilter.apply(TradeLockRuleCommandEntity.builder()
                         .activityId(payActivityEntity.getActivityId())
                         .userId(userEntity.getUserId())
+                        .teamId(payActivityEntity.getTeamId())
                 .build(),new TradeRuleFilterFactory.DynamicContext());
         Integer userTakeOrderCount= tradeLockRuleFilterBackEntity.getUserTakeOrderCount();
         GroupBuyOrderAggregate groupBuyOrderAggregate = new GroupBuyOrderAggregate();
@@ -46,6 +47,14 @@ public class TradeOrderLockImpl implements ITradeOrderService {
         groupBuyOrderAggregate.setPayDiscountEntity(payDiscountEntity);
         groupBuyOrderAggregate.setUserEntity(userEntity);
         groupBuyOrderAggregate.setUserTakeOrderCount(userTakeOrderCount);
-        return tradeRepository.lockMarketPayOrder(groupBuyOrderAggregate);
+        try {
+            // 锁定聚合订单 - 这会用户只是下单还没有支付。后续会有2个流程；支付成功、超时未支付（回退）
+            return tradeRepository.lockMarketPayOrder(groupBuyOrderAggregate);
+        } catch (Exception e) {
+            // 记录失败恢复量
+            tradeRepository.recoveryTeamStock(tradeLockRuleFilterBackEntity.getRecoveryTeamStockKey(), payActivityEntity.getValidTime());
+            throw e;
+        }
+
     }
 }

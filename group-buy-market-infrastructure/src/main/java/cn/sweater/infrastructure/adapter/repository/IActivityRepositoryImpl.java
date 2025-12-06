@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
-public class IActivityRepositoryImpl implements IActivityRepository {
+public class IActivityRepositoryImpl extends AbstractRepository implements IActivityRepository {
     @Resource
     private IGroupBuyDiscountDao groupBuyDiscountDao;
     @Resource
@@ -42,15 +42,38 @@ public class IActivityRepositoryImpl implements IActivityRepository {
 //        groupBuyActivityRes.setSource(source);
 //        groupBuyActivityRes.setChannel(channel);
         //查拼团活动
-        GroupBuyActivity groupBuyActivity = groupBuyActivityDao.queryValidGroupBuyActivityId(activityId);
-        if (groupBuyActivity == null) {
-            return null;
-        }
+        //NOTE函数式编程判断是否走redis进行查询
+        String groupBuyActivityCacheKey=GroupBuyActivity.cacheRedisKey(activityId);
+        GroupBuyActivity groupBuyActivity=getFromCacheOrDb(groupBuyActivityCacheKey,()->groupBuyActivityDao.queryValidGroupBuyActivityId(activityId));
+//        GroupBuyActivity groupBuyActivity=redisService.getValue(groupBuyActivityCacheKey);
+//        if(groupBuyActivity==null){
+//            groupBuyActivity = groupBuyActivityDao.queryValidGroupBuyActivityId(activityId);
+//            redisService.setValue(groupBuyActivityCacheKey, groupBuyActivity);
+//            if (groupBuyActivity == null) {
+//                return null;
+//            }
+//        }
+//        GroupBuyActivity groupBuyActivity = groupBuyActivityDao.queryValidGroupBuyActivityId(activityId);
+//        if (groupBuyActivity == null) {
+//            return null;
+//        }
+
         String disCountId = groupBuyActivity.getDiscountId();
-        GroupBuyDiscount groupBuyDiscount = groupBuyDiscountDao.queryGroupBuyActivityDiscountByDiscountId(disCountId);
-        if (groupBuyDiscount == null) {
-            return null;
-        }
+        String discountCacheKey=GroupBuyDiscount.cacheRedisKey(disCountId);
+        GroupBuyDiscount groupBuyDiscount=getFromCacheOrDb(discountCacheKey,()->groupBuyDiscountDao.queryGroupBuyActivityDiscountByDiscountId(disCountId));
+//        GroupBuyDiscount groupBuyDiscount=redisService.getValue(discountCacheKey);
+//        if(groupBuyDiscount==null){
+//            groupBuyDiscount=groupBuyDiscountDao.queryGroupBuyActivityDiscountByDiscountId(disCountId);
+//            redisService.setValue(discountCacheKey, groupBuyDiscount);
+//            if (groupBuyDiscount == null) {
+//                return null;
+//            }
+//        }
+//        String disCountId = groupBuyActivity.getDiscountId();
+//        GroupBuyDiscount groupBuyDiscount = groupBuyDiscountDao.queryGroupBuyActivityDiscountByDiscountId(disCountId);
+//        if (groupBuyDiscount == null) {
+//            return null;
+//        }
         //查商品Id
 
         GroupBuyActivityDiscountVO.GroupBuyDiscount groupBuyDiscountVG = GroupBuyActivityDiscountVO.GroupBuyDiscount.builder()

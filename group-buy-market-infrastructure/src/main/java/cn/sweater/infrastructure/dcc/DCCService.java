@@ -15,6 +15,8 @@ public class DCCService {
     private String cutRange;
     @DCCValue("scBlackList:s02c02")
     private String scBlackList;
+    @DCCValue("cacheOpenSwitch:0")
+    private String cacheOpenSwitch;
     public Boolean isDowngradeSwitch() {
         return "1".equals(downgradeSwitch);
     }
@@ -26,5 +28,8 @@ public class DCCService {
     public Boolean isScBlackList(String source,String channel) {
         List<String> blackList = Arrays.asList(scBlackList.split(Constants.SPLIT));
         return blackList.contains(source+channel);
+    }
+    public Boolean isCacheOpenSwitch() {
+        return "0".equals(cacheOpenSwitch);
     }
 }
