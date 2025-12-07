@@ -1,5 +1,6 @@
 package cn.sweater.trigger.http;
 
+import cn.bugstack.wrench.rate.limiter.types.annotations.RateLimiterAccessInterceptor;
 import cn.sweater.api.dto.GoodsMarketRequestDTO;
 import cn.sweater.api.dto.GoodsMarketResponseDTO;
 import cn.sweater.api.IMarketIndexService;
@@ -30,11 +31,13 @@ import java.util.List;
 public class MarketIndexServiceController implements IMarketIndexService {
     @Resource
     private IIndexGroupBuyMarketService indexGroupBuyMarketService;
+
     //NOTE商品以及相关拼团信息查询接口
-    @RequestMapping(value = "query_group_buy_market_config",method = RequestMethod.POST)
+    @RateLimiterAccessInterceptor(key = "userId", fallbackMethod = "queryGroupBuyMarketConfigFallBack", permitsPerSecond = 1.0d, blacklistCount = 1)
+    @RequestMapping(value = "query_group_buy_market_config", method = RequestMethod.POST)
     @Override
     public Response<GoodsMarketResponseDTO> queryGroupBuyMarketConfig(@RequestBody GoodsMarketRequestDTO goodsMarketRequestDTO) {
-        try{
+        try {
             log.info("查询拼团营销信息查询开始:{} goodsId:{} ", goodsMarketRequestDTO.getUserId(), goodsMarketRequestDTO.getGoodsId());
             if (StringUtils.isBlank(goodsMarketRequestDTO.getGoodsId()) || StringUtils.isBlank(goodsMarketRequestDTO.getChannel())
                     || StringUtils.isBlank(goodsMarketRequestDTO.getSource())
@@ -45,30 +48,30 @@ public class MarketIndexServiceController implements IMarketIndexService {
                         .build();
             }//NOTE进行优惠试算
             TrialBalanceEntity trialBalanceEntity = indexGroupBuyMarketService.indexMarketTrial(MarketProductEntity.builder()
-                            .userId(goodsMarketRequestDTO.getUserId())
-                            .channel(goodsMarketRequestDTO.getChannel())
-                            .source(goodsMarketRequestDTO.getSource())
-                            .goodsId(goodsMarketRequestDTO.getGoodsId())
+                    .userId(goodsMarketRequestDTO.getUserId())
+                    .channel(goodsMarketRequestDTO.getChannel())
+                    .source(goodsMarketRequestDTO.getSource())
+                    .goodsId(goodsMarketRequestDTO.getGoodsId())
                     .build());
-            GroupBuyActivityDiscountVO groupBuyActivityDiscountVO=trialBalanceEntity.getGroupBuyActivityDiscountVO();
+            GroupBuyActivityDiscountVO groupBuyActivityDiscountVO = trialBalanceEntity.getGroupBuyActivityDiscountVO();
             Long activityId = groupBuyActivityDiscountVO.getActivityId();
             //NOTE查询当前商品下所有的拼团对应页面的多个拼团
-            List<UserGroupBuyOrderDetailEntity> userGroupBuyOrderDetailEntities=indexGroupBuyMarketService
-                    .queryInProgressUserGroupBuyOrderDetailList(activityId,goodsMarketRequestDTO.getUserId(),1,2);
+            List<UserGroupBuyOrderDetailEntity> userGroupBuyOrderDetailEntities = indexGroupBuyMarketService
+                    .queryInProgressUserGroupBuyOrderDetailList(activityId, goodsMarketRequestDTO.getUserId(), 1, 2);
             //System.out.println(JSON.toJSONString(userGroupBuyOrderDetailEntities));
             //NOTE查询当前商品的统计对象
-            TeamStatisticVO teamStatisticVO=indexGroupBuyMarketService.quertTeamStatisticByActivtiyId(activityId);
+            TeamStatisticVO teamStatisticVO = indexGroupBuyMarketService.quertTeamStatisticByActivtiyId(activityId);
             //NOTE组合成最终的Response
-            GoodsMarketResponseDTO goodsMarketResponseDTO=new GoodsMarketResponseDTO();
+            GoodsMarketResponseDTO goodsMarketResponseDTO = new GoodsMarketResponseDTO();
             goodsMarketResponseDTO.setGoods(GoodsMarketResponseDTO.Goods.builder()
-                            .deductionPrice(trialBalanceEntity.getDeductionPrice())
-                            .goodsId(trialBalanceEntity.getGoodsId())
-                            .originalPrice(trialBalanceEntity.getOriginalPrice())
-                            .payPrice(trialBalanceEntity.getPayPrice())
+                    .deductionPrice(trialBalanceEntity.getDeductionPrice())
+                    .goodsId(trialBalanceEntity.getGoodsId())
+                    .originalPrice(trialBalanceEntity.getOriginalPrice())
+                    .payPrice(trialBalanceEntity.getPayPrice())
                     .build());
-            List<GoodsMarketResponseDTO.Team>teamList=new ArrayList<GoodsMarketResponseDTO.Team>();
-            for(UserGroupBuyOrderDetailEntity userGroupBuyOrderDetailEntity:userGroupBuyOrderDetailEntities){
-                GoodsMarketResponseDTO.Team team=GoodsMarketResponseDTO.Team.builder()
+            List<GoodsMarketResponseDTO.Team> teamList = new ArrayList<GoodsMarketResponseDTO.Team>();
+            for (UserGroupBuyOrderDetailEntity userGroupBuyOrderDetailEntity : userGroupBuyOrderDetailEntities) {
+                GoodsMarketResponseDTO.Team team = GoodsMarketResponseDTO.Team.builder()
                         .userIds(userGroupBuyOrderDetailEntity.getUserIds())
                         .teamId(userGroupBuyOrderDetailEntity.getTeamId())
                         .activityId(activityId)
@@ -92,7 +95,7 @@ public class MarketIndexServiceController implements IMarketIndexService {
                     .build();
             goodsMarketResponseDTO.setTeamStatistic(teamStatistic);
             goodsMarketResponseDTO.setActivityId(activityId);
-            Response<GoodsMarketResponseDTO>response=Response.<GoodsMarketResponseDTO>builder()
+            Response<GoodsMarketResponseDTO> response = Response.<GoodsMarketResponseDTO>builder()
                     .code(ResponseCode.SUCCESS.getCode())
                     .info(ResponseCode.SUCCESS.getInfo())
                     .data(goodsMarketResponseDTO)
@@ -106,7 +109,7 @@ public class MarketIndexServiceController implements IMarketIndexService {
                     .code(e.getCode())
                     .info(e.getInfo())
                     .build();
-        }catch(Exception e) {
+        } catch (Exception e) {
             log.info("查询拼团营销信息查询失败:{} goodsId:{} ", goodsMarketRequestDTO.getUserId(), goodsMarketRequestDTO.getGoodsId());
             e.printStackTrace();
             return Response.<GoodsMarketResponseDTO>builder()
@@ -114,5 +117,13 @@ public class MarketIndexServiceController implements IMarketIndexService {
                     .info(ResponseCode.UN_ERROR.getInfo())
                     .build();
         }
+    }
+    public Response<GoodsMarketResponseDTO> queryGroupBuyMarketConfigFallBack(@RequestBody GoodsMarketRequestDTO requestDTO) {
+        log.error("查询拼团营销配置限流:{}", requestDTO.getUserId());
+        return Response.<GoodsMarketResponseDTO>builder()
+                .code(ResponseCode.RATE_LIMITER.getCode())
+                .info(ResponseCode.RATE_LIMITER.getInfo())
+                .build();
+
     }
 }

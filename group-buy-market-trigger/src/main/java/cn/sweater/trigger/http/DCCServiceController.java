@@ -1,5 +1,6 @@
 package cn.sweater.trigger.http;
 
+import cn.bugstack.wrench.dynamic.config.center.domain.model.valobj.AttributeVO;
 import cn.sweater.api.IDCCService;
 import cn.sweater.api.response.Response;
 import cn.sweater.types.enums.ResponseCode;
@@ -20,7 +21,8 @@ public class DCCServiceController implements IDCCService {
     @Override
     public Response<Boolean> updateConfig(@RequestParam String key, @RequestParam String value) {
         try{
-            dccTopic.publish(key+","+value);
+            //dccTopic.publish(key+","+value);
+            dccTopic.publish(new AttributeVO(key, value));
             return Response.<Boolean>builder()
                     .code(ResponseCode.SUCCESS.getCode())
                     .info(ResponseCode.SUCCESS.getInfo())
