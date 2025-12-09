@@ -47,7 +47,6 @@ services:
     restart: unless-stopped
     networks:
       - my-network
-
 networks:
   my-network:
     driver: bridge

@@ -1,6 +1,7 @@
 package cn.sweater.domain.trade.adapter.repository;
 
 import cn.sweater.domain.trade.model.aggergate.GroupBuyOrderAggregate;
+import cn.sweater.domain.trade.model.aggergate.GroupBuyRefundAggregate;
 import cn.sweater.domain.trade.model.aggergate.GroupBuyTeamSettlementAggregate;
 import cn.sweater.domain.trade.model.entity.GroupBuyActivityEntity;
 import cn.sweater.domain.trade.model.entity.GroupBuyTeamEntity;
@@ -40,4 +41,6 @@ public interface ITradeRepository {
     boolean occupyTeamStock(String teamStockKey, String recoveryTeamStockKey, Integer target, Integer validTime);
 
     void recoveryTeamStock(String recoveryTeamStockKey, Integer validTime);
+
+    void unpaid2Refund(GroupBuyRefundAggregate groupBuyRefundAggregate);
 }

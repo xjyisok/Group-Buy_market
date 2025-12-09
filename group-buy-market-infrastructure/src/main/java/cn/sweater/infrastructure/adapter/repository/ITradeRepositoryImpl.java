@@ -2,6 +2,7 @@ package cn.sweater.infrastructure.adapter.repository;
 
 import cn.sweater.domain.trade.adapter.repository.ITradeRepository;
 import cn.sweater.domain.trade.model.aggergate.GroupBuyOrderAggregate;
+import cn.sweater.domain.trade.model.aggergate.GroupBuyRefundAggregate;
 import cn.sweater.domain.trade.model.aggergate.GroupBuyTeamSettlementAggregate;
 import cn.sweater.domain.trade.model.entity.*;
 import cn.sweater.domain.trade.model.valobj.GroupBuyProgressVO;
@@ -357,5 +358,27 @@ public class ITradeRepositoryImpl implements ITradeRepository {
         // 首次组队拼团，是没有 teamId 的，所以不需要这个做处理。
         if (StringUtils.isBlank(recoveryTeamStockKey)) return;
         redisService.incr(recoveryTeamStockKey);
+    }
+
+    @Override
+    @Transactional(timeout = 5000)
+    public void unpaid2Refund(GroupBuyRefundAggregate groupBuyRefundAggregate) {
+        TradeRefundOrderEntity tradeRefundOrderEntity = groupBuyRefundAggregate.getTradeRefundOrderEntity();
+        GroupBuyProgressVO groupBuyProgressVO = groupBuyRefundAggregate.getGroupBuyProgressVO();
+        GroupBuyOrderList groupBuyOrderListReq=new GroupBuyOrderList();
+        groupBuyOrderListReq.setUserId(tradeRefundOrderEntity.getUserId());
+        groupBuyOrderListReq.setOrderId(tradeRefundOrderEntity.getOrderId());
+        int updateUnpaid2RefundCount=groupBuyOrderListDao.unpaid2Refund(groupBuyOrderListReq);
+        if(updateUnpaid2RefundCount!=1){
+            throw new AppException(ResponseCode.UPDATE_ZERO.getCode());
+        }
+        GroupBuyOrder groupBuyOrderReq=new GroupBuyOrder();
+        groupBuyOrderReq.setTeamId(tradeRefundOrderEntity.getTeamId());
+        groupBuyOrderReq.setLockCount(groupBuyProgressVO.getLockCount());
+        //System.out.println(groupBuyOrderReq.getTeamId()+groupBuyOrderReq.getLockCount());
+        int updateUnpaid2RefundCountOrder=groupBuyOrderDao.unpaid2Refund(groupBuyOrderReq);
+        if(updateUnpaid2RefundCountOrder!=1){
+            throw new AppException(ResponseCode.UPDATE_ZERO.getCode());
+        }
     }
 }

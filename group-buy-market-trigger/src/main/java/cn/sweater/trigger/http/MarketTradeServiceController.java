@@ -14,6 +14,7 @@ import cn.sweater.domain.trade.model.entity.*;
 import cn.sweater.domain.trade.model.valobj.GroupBuyProgressVO;
 import cn.sweater.domain.trade.model.valobj.NotifyConfigVO;
 import cn.sweater.domain.trade.model.valobj.NotifyTypeEnumVO;
+import cn.sweater.domain.trade.model.valobj.TradeOrderStatusEnumVO;
 import cn.sweater.domain.trade.service.ITradeOrderService;
 import cn.sweater.domain.trade.service.ITradeSettlementOrderService;
 import cn.sweater.types.enums.ResponseCode;
@@ -66,7 +67,7 @@ public class MarketTradeServiceController implements IMarketTradeServiceApi {
 
             // 查询 outTradeNo 是否已经存在交易记录
             MarketPayOrderEntity marketPayOrderEntity = tradeOrderService.queryNoPayMarketPayOrderByOutTradeNo(userId, outTradeNo);
-            if (null != marketPayOrderEntity) {
+            if (null != marketPayOrderEntity&& TradeOrderStatusEnumVO.CREATE.equals(marketPayOrderEntity.getTradeOrderStatusEnumVO())) {
                 LockMarketPayOrderResponseDTO lockMarketPayOrderResponseDTO = LockMarketPayOrderResponseDTO.builder()
                         .orderId(marketPayOrderEntity.getOrderId())
                         .deductionPrice(marketPayOrderEntity.getDeductionPrice())

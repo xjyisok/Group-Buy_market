@@ -5,6 +5,7 @@ import cn.sweater.domain.trade.adapter.repository.ITradeRepository;
 import cn.sweater.domain.trade.model.entity.MarketPayOrderEntity;
 import cn.sweater.domain.trade.model.entity.TradeSettlementRuleCommandEntity;
 import cn.sweater.domain.trade.model.entity.TradeSettlementRuleFilterBackEntity;
+import cn.sweater.domain.trade.model.valobj.TradeOrderStatusEnumVO;
 import cn.sweater.domain.trade.service.settlement.factory.TradeSettlementRuleFilterFactory;
 
 import cn.sweater.types.enums.ResponseCode;
@@ -25,7 +26,7 @@ public class OutTradeNORuleFilter implements ILogicHandler<TradeSettlementRuleCo
         //查询拼团信息
         MarketPayOrderEntity marketPayOrderEntity=tradeRepository.queryNoPayMarketPayOrderByOutTradeNo(requestParameter.getUserId(),requestParameter.getOutTradeNo());
         System.out.println(requestParameter.getUserId()+requestParameter.getOutTradeNo());
-        if(marketPayOrderEntity==null){
+        if(marketPayOrderEntity==null||!marketPayOrderEntity.getTradeOrderStatusEnumVO().equals(TradeOrderStatusEnumVO.CREATE)){
             throw new AppException(ResponseCode.E0104.getCode(),ResponseCode.E0104.getInfo());
         }
         dynamicContext.setMarketPayOrderEntity(marketPayOrderEntity);
