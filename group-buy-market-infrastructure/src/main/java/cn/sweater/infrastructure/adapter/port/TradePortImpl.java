@@ -35,6 +35,7 @@ public class TradePortImpl implements ITradePort {
                         return groupBuyNotifyService.GroupBuyNotify(notifyTask.getNotifyUrl(), notifyTask.getParameterJson());
                     }
                     else if(notifyTask.getNotifyType().equals(NotifyTypeEnumVO.MQ.getCode())) {
+                        //("发送退单MQ消息"+notifyTask.getNotifyMQ()+notifyTask.getParameterJson());
                         publisher.publish(notifyTask.getNotifyMQ(), notifyTask.getParameterJson());
                         return NotifyTaskHttpEnumVO.SUCCESS.getCode();
                     }

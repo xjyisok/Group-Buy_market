@@ -26,6 +26,7 @@ public class EventPublisher {
 
     public void publish(String routingKey, String message) {
         try {
+            //System.out.println("发送的消息topic" + routingKey + "消息" + message);
             rabbitTemplate.convertAndSend(exchangeName, routingKey, message, m -> {
                 // 持久化消息配置
                 m.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);

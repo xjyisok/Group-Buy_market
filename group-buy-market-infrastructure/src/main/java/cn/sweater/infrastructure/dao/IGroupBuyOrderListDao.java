@@ -31,4 +31,6 @@ public interface IGroupBuyOrderListDao {
     List<String>queryUserIdsByTeamId(String teamId);
 
     int unpaid2Refund(GroupBuyOrderList groupBuyOrderListReq);
+
+    int paid2Refund(GroupBuyOrderList groupBuyOrderListReq);
 }

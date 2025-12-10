@@ -10,15 +10,15 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class TeamSuccessTopicListener {
+public class TeamRefundTopicListener {
     @RabbitListener(
             bindings = @QueueBinding(
-                    value = @Queue(value ="${spring.rabbitmq.config.producer.topic_team_success.queue}"),
+                    value = @Queue(value ="${spring.rabbitmq.config.producer.topic_team_refund.queue}"),
                     exchange = @Exchange(value = "${spring.rabbitmq.config.producer.exchange}",type = ExchangeTypes.TOPIC),
-                    key="${spring.rabbitmq.config.producer.topic_team_success.routing_key}"
+                    key="${spring.rabbitmq.config.producer.topic_team_refund.routing_key}"
             )
     )
     public void Listener(String message) {
-        log.info("接收到message:{}", message);
+        log.info("接收到退款message退单成功将发起退款:{}", message);
     }
 }

@@ -23,4 +23,13 @@ public class GroupBuyRefundAggregate {
                 .build());
         return groupBuyRefundAggregate;
     }
+    public static GroupBuyRefundAggregate buildpaid2RefundAggregate(TradeRefundOrderEntity orderEntity,Integer lockCount,Integer completeCount) {
+        GroupBuyRefundAggregate groupBuyRefundAggregate = new GroupBuyRefundAggregate();
+        groupBuyRefundAggregate.setTradeRefundOrderEntity(orderEntity);
+        groupBuyRefundAggregate.setGroupBuyProgressVO(GroupBuyProgressVO.builder()
+                .lockCount(lockCount)
+                .completeCount(completeCount)
+                .build());
+        return groupBuyRefundAggregate;
+    }
 }

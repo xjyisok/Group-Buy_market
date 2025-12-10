@@ -19,6 +19,6 @@ public interface ITradeSettlementOrderService {
      */
     TradePaySettlementEntity settlementMarketPayOrder(TradePaySuccessEntity tradePaySuccessEntity) throws Exception;//NOTE结算
 
-    Map<String,Integer> execSettlementNotifyJob()throws Exception;
-    Map<String,Integer> execSettlementNotifyJob(String teamId)throws Exception;//NOTE回调用于拼团订单人数满足要求
+//    Map<String,Integer> execSettlementNotifyJob()throws Exception;
+//    Map<String,Integer> execSettlementNotifyJob(String teamId)throws Exception;//NOTE回调用于拼团订单人数满足要求
 }

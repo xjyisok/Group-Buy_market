@@ -13,4 +13,5 @@ public class TradeRefundOrderEntity {
     private String userId;
     private String orderId;
     private String teamId;
+    private Long activityId;
 }

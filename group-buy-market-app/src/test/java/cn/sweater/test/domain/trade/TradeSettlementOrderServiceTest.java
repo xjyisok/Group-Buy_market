@@ -33,7 +33,7 @@ public class TradeSettlementOrderServiceTest {
         tradePaySuccessEntity.setSource("s01");
         tradePaySuccessEntity.setChannel("c01");
         tradePaySuccessEntity.setUserId("xjy");
-        tradePaySuccessEntity.setOutTradeNo("127208480212");
+        tradePaySuccessEntity.setOutTradeNo("351115140639");
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);

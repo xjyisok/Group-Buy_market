@@ -49,6 +49,7 @@ public class TradeRefundOrderService implements ITradeRefundOrderService {
         //3. 策略模式匹配对应策略
         refundOrderStrategy.refundOrder(TradeRefundOrderEntity.builder()
                         .userId(tradeRefundCommandEntity.getUserId())
+                        .activityId(groupBuyTeamEntity.getActivityId())
                         .orderId(orderId)
                 .teamId(teamId)
                 .build());
