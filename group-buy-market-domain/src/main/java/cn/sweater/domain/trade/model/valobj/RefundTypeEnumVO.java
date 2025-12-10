@@ -28,7 +28,7 @@ public enum RefundTypeEnumVO {
     PAID_FORMED("paid_formed", "paidTeam2RefundStrategy", "已支付已成团"){
         @Override
         public boolean matches(GroupBuyOrderEnumVO groupBuyOrderEnumVO, TradeOrderStatusEnumVO tradeOrderStatusEnumVO) {
-            return GroupBuyOrderEnumVO.COMPLETE.equals(groupBuyOrderEnumVO)&&TradeOrderStatusEnumVO.COMPLETE.equals(tradeOrderStatusEnumVO);
+            return (GroupBuyOrderEnumVO.COMPLETE.equals(groupBuyOrderEnumVO)||GroupBuyOrderEnumVO.COMPLETE_FAIL.equals(groupBuyOrderEnumVO))&&TradeOrderStatusEnumVO.COMPLETE.equals(tradeOrderStatusEnumVO);
         }
     };
     private String code;

@@ -34,5 +34,9 @@ public class NotifyTask {
     private Date createTime;
     /** 更新时间 */
     private Date updateTime;
+    /** 唯一索引*/
+    private String uuid;
+    /**消息类别 */
+    private String notifyCategory;
 
 }

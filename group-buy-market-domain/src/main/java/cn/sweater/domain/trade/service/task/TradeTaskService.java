@@ -28,7 +28,7 @@ public class TradeTaskService implements ITradeTaskService {
 
         // 查询未执行任务
         List<NotifyTaskEntity> notifyTaskEntityList = tradeRepository.queryUnExecutedNotifyTaskList();
-        //System.out.println(notifyTaskEntityList.size());
+        System.out.println(notifyTaskEntityList.size());
         return getStringIntegerMap(notifyTaskEntityList);
     }
 
@@ -37,21 +37,21 @@ public class TradeTaskService implements ITradeTaskService {
         for (NotifyTaskEntity notifyTask : notifyTaskEntityList) {
             // 回调处理 success 成功，error 失败
             String response = tradePort.groupBuyNotify(notifyTask);
-
+            System.out.println(response);
             // 更新状态判断&变更数据库表回调任务状态
             if (NotifyTaskHttpEnumVO.SUCCESS.getCode().equals(response)) {
-                int updateCount = tradeRepository.updateNotifyTaskStatusSuccess(notifyTask.getTeamId());
+                int updateCount = tradeRepository.updateNotifyTaskStatusSuccess(notifyTask.getUuid());
                 if (1 == updateCount) {
                     successCount += 1;
                 }
             } else if (NotifyTaskHttpEnumVO.ERROR.getCode().equals(response)) {
                 if (notifyTask.getNotifyCount() < 5) {
-                    int updateCount = tradeRepository.updateNotifyTaskStatusError(notifyTask.getTeamId());
+                    int updateCount = tradeRepository.updateNotifyTaskStatusError(notifyTask.getUuid());
                     if (1 == updateCount) {
                         errorCount += 1;
                     }
                 } else {
-                    int updateCount = tradeRepository.updateNotifyTaskStatusRetry(notifyTask.getTeamId());
+                    int updateCount = tradeRepository.updateNotifyTaskStatusRetry(notifyTask.getUuid());
                     if (1 == updateCount) {
                         retryCount += 1;
                     }

@@ -7,6 +7,7 @@ import cn.sweater.infrastructure.event.EventPublisher;
 import cn.sweater.infrastructure.gateway.GroupBuyNotifyService;
 import cn.sweater.infrastructure.redis.IRedisService;
 import cn.sweater.types.enums.NotifyTaskHttpEnumVO;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RLock;
 import org.springframework.stereotype.Repository;
@@ -15,6 +16,7 @@ import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 @Repository
+@Slf4j
 public class TradePortImpl implements ITradePort {
     @Resource
     private GroupBuyNotifyService groupBuyNotifyService;
@@ -28,6 +30,7 @@ public class TradePortImpl implements ITradePort {
         try{
             if(lock.tryLock(3,0, TimeUnit.SECONDS)){
                 try{
+                    System.out.println(notifyTask.getNotifyType());
                     if(notifyTask.getNotifyType().equals(NotifyTypeEnumVO.HTTP.getCode())) {
                         if (StringUtils.isBlank(notifyTask.getNotifyUrl()) || notifyTask.getNotifyUrl().equals("暂无")) {
                             return NotifyTaskHttpEnumVO.SUCCESS.getCode();
@@ -35,7 +38,7 @@ public class TradePortImpl implements ITradePort {
                         return groupBuyNotifyService.GroupBuyNotify(notifyTask.getNotifyUrl(), notifyTask.getParameterJson());
                     }
                     else if(notifyTask.getNotifyType().equals(NotifyTypeEnumVO.MQ.getCode())) {
-                        //("发送退单MQ消息"+notifyTask.getNotifyMQ()+notifyTask.getParameterJson());
+                        log.info("发送退单MQ消息"+notifyTask.getNotifyMQ()+notifyTask.getParameterJson());
                         publisher.publish(notifyTask.getNotifyMQ(), notifyTask.getParameterJson());
                         return NotifyTaskHttpEnumVO.SUCCESS.getCode();
                     }

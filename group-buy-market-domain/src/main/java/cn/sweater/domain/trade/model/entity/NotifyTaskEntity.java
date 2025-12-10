@@ -24,6 +24,8 @@ public class NotifyTaskEntity {
     private Integer notifyStatus;
     /** 参数对象 */
     private String parameterJson;
+    /** uuid*/
+    private String uuid;
 
     public String lockKey() {
         return "notify_job_lock_key_" + this.teamId;

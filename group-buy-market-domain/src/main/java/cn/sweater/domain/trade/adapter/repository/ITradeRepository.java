@@ -32,17 +32,19 @@ public interface ITradeRepository {
     List<NotifyTaskEntity> queryUnExecutedNotifyTaskList();
     List<NotifyTaskEntity> queryUnExecutedNotifyTaskList(String teamId);
 
-    int updateNotifyTaskStatusSuccess(String teamId);
+    int updateNotifyTaskStatusSuccess(String uuid);
 
-    int updateNotifyTaskStatusError(String teamId);
+    int updateNotifyTaskStatusError(String uuid);
 
-    int updateNotifyTaskStatusRetry(String teamId);
+    int updateNotifyTaskStatusRetry(String uuid);
 
     boolean occupyTeamStock(String teamStockKey, String recoveryTeamStockKey, Integer target, Integer validTime);
 
     void recoveryTeamStock(String recoveryTeamStockKey, Integer validTime);
 
-    void unpaid2Refund(GroupBuyRefundAggregate groupBuyRefundAggregate);
+    NotifyTaskEntity unpaid2Refund(GroupBuyRefundAggregate groupBuyRefundAggregate);
 
     NotifyTaskEntity paid2Refund(GroupBuyRefundAggregate groupBuyRefundAggregate);
+
+    NotifyTaskEntity paidTeam2Refund(GroupBuyRefundAggregate groupBuyRefundAggregate);
 }

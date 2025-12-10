@@ -22,24 +22,30 @@ public class GroupBuyUrlJob {
     private RedissonClient redissonClient;
     @Resource
     private ITradeTaskService tradeTaskService;
-    @Scheduled(cron="0/15 * * * * ?")
-    public void exec(){
-        // 为什么加锁？分布式应用N台机器部署互备（一个应用实例挂了，还有另外可用的），任务调度会有N个同时执行，那么这里需要增加抢占机制，谁抢占到谁就执行。完毕后，下一轮继续抢占。
+    @Scheduled(fixedDelay = 15000)  // 或 cron 也行，但 fixedDelay 更安全
+    public void exec() {
+
         RLock lock = redissonClient.getLock("group_buy_market_notify_job_exec");
-        try{
-            boolean isLocked = lock.tryLock(3, 0, TimeUnit.SECONDS);
-            if(!isLocked){
+
+        // 使用无 leaseTime 的 tryLock，自动续期，绝不会锁丢失
+        boolean acquired = false;
+        try {
+            acquired = lock.tryLock(2, TimeUnit.SECONDS); // 最多等待 2 秒，leaseTime = infinite（自动续期）
+            if (!acquired) {
                 return;
             }
-            Map<String,Integer> result=tradeTaskService.execNotifyJob();
-            log.info("定时任务回调通知平团完结任务结束result:{}", JSON.toJSONString(result));
-        }catch(Exception e){
-            log.error("定时任务回调通知平团完结任务失败",e);
-            e.printStackTrace();
-        }finally{
-            if(lock.isLocked()&&lock.isHeldByCurrentThread()){
+
+            Map<String, Integer> result = tradeTaskService.execNotifyJob();
+            log.info("定时任务回调通知平团完结任务结束 result: {}", JSON.toJSONString(result));
+
+        } catch (Exception e) {
+            log.error("定时任务回调通知平团完结任务失败", e);
+        } finally {
+            // 必须只判断是否由当前线程持有锁
+            if (acquired && lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }
         }
     }
+
 }
