@@ -8,6 +8,7 @@ import cn.sweater.domain.trade.model.entity.GroupBuyTeamEntity;
 import cn.sweater.domain.trade.model.entity.MarketPayOrderEntity;
 import cn.sweater.domain.trade.model.entity.NotifyTaskEntity;
 import cn.sweater.domain.trade.model.valobj.GroupBuyProgressVO;
+import cn.sweater.domain.trade.model.valobj.TeamRefundSuccess;
 
 import java.util.List;
 
@@ -47,4 +48,6 @@ public interface ITradeRepository {
     NotifyTaskEntity paid2Refund(GroupBuyRefundAggregate groupBuyRefundAggregate);
 
     NotifyTaskEntity paidTeam2Refund(GroupBuyRefundAggregate groupBuyRefundAggregate);
+
+    void refund2Recovery(String recoveryTeamStockKey, TeamRefundSuccess teamRefundSuccess);
 }

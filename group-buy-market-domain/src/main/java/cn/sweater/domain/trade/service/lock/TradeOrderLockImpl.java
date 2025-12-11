@@ -53,6 +53,8 @@ public class TradeOrderLockImpl implements ITradeOrderService {
             return tradeRepository.lockMarketPayOrder(groupBuyOrderAggregate);
         } catch (Exception e) {
             // 记录失败恢复量
+            //NOTE由于每次尝试锁单long occupy = redisService.incr(teamStockKey) + 1都必然会导致teamStockKey+1，以至于下次的occupy必然+1所以一旦锁单失败
+            //NOTE所以不管什么原因都必须让recoveryStock+1
             tradeRepository.recoveryTeamStock(tradeLockRuleFilterBackEntity.getRecoveryTeamStockKey(), payActivityEntity.getValidTime());
             throw e;
         }

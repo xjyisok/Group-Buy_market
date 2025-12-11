@@ -3,6 +3,7 @@ package cn.sweater.domain.trade.service.refund;
 import cn.sweater.domain.trade.adapter.repository.ITradeRepository;
 import cn.sweater.domain.trade.model.entity.*;
 import cn.sweater.domain.trade.model.valobj.RefundTypeEnumVO;
+import cn.sweater.domain.trade.model.valobj.TeamRefundSuccess;
 import cn.sweater.domain.trade.model.valobj.TradeOrderStatusEnumVO;
 import cn.sweater.domain.trade.service.ITradeRefundOrderService;
 import cn.sweater.domain.trade.service.refund.business.IRefundOrderStrategy;
@@ -59,5 +60,13 @@ public class TradeRefundOrderService implements ITradeRefundOrderService {
                 .teamId(teamId)
                 .tradeRefundBehaviorEnum(TradeRefundBehaviorEntity.TradeRefundBehaviorEnum.SUCCESS)
                 .build();
+    }
+
+    @Override
+    public void restoreTeamStockLock(TeamRefundSuccess teamRefundSuccess) {
+        String type = teamRefundSuccess.getType();
+        RefundTypeEnumVO refundTypeEnumVO=RefundTypeEnumVO.getRefundTypeEnumVOByCode(type);
+        IRefundOrderStrategy refundOrderStrategy = strategyMap.get(refundTypeEnumVO.getStrategy());
+        refundOrderStrategy.restoreTeamStockLock(teamRefundSuccess);
     }
 }

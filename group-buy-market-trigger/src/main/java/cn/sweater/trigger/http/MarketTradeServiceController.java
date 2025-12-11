@@ -74,6 +74,7 @@ public class MarketTradeServiceController implements IMarketTradeServiceApi {
                         .tradeOrderStatus(marketPayOrderEntity.getTradeOrderStatusEnumVO().getCode())
                         .originalPrice(marketPayOrderEntity.getOriginalPrice())
                         .payPrice(marketPayOrderEntity.getPayPrice())
+                        .teamId(marketPayOrderEntity.getTeamId())
                         .build();
 
                 log.info("交易锁单记录(存在):{} marketPayOrderEntity:{}", userId, JSON.toJSONString(marketPayOrderEntity));
@@ -154,6 +155,7 @@ public class MarketTradeServiceController implements IMarketTradeServiceApi {
                             .tradeOrderStatus(marketPayOrderEntity.getTradeOrderStatusEnumVO().getCode())
                             .payPrice(marketPayOrderEntity.getPayPrice())
                             .originalPrice(marketPayOrderEntity.getOriginalPrice())
+                            .teamId(marketPayOrderEntity.getTeamId())
                             .build())
                     .build();
         } catch (AppException e) {

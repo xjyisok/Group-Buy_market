@@ -5,7 +5,9 @@ import cn.sweater.domain.trade.model.aggergate.GroupBuyRefundAggregate;
 import cn.sweater.domain.trade.model.entity.GroupBuyTeamEntity;
 import cn.sweater.domain.trade.model.entity.NotifyTaskEntity;
 import cn.sweater.domain.trade.model.entity.TradeRefundOrderEntity;
+import cn.sweater.domain.trade.model.valobj.TeamRefundSuccess;
 import cn.sweater.domain.trade.service.ITradeTaskService;
+import cn.sweater.domain.trade.service.lock.factory.TradeRuleFilterFactory;
 import cn.sweater.domain.trade.service.refund.business.IRefundOrderStrategy;
 import cn.sweater.types.enums.GroupBuyOrderEnumVO;
 import cn.sweater.types.exception.AppException;
@@ -46,5 +48,14 @@ public class PaidTeam2RefundStrategy implements IRefundOrderStrategy {
                 }
             });
         }
+    }
+
+    @Override
+    public void restoreTeamStockLock(TeamRefundSuccess teamRefundSuccess) {
+        log.info("退单；恢复锁单量 - 未支付，未成团，但有锁单记录，要恢复锁单库存 {} {} {}",
+                teamRefundSuccess.getUserId(), teamRefundSuccess.getActivityId(), teamRefundSuccess.getTeamId());
+//        String recoveryTeamStockKey= TradeRuleFilterFactory.generateRecoveryTeamStockKey(teamRefundSuccess.getTeamId(),teamRefundSuccess.getActivityId());
+//        tradeRepository.refund2Recovery(recoveryTeamStockKey,teamRefundSuccess);
+        //已成功的拼团就不需要恢复库存了，该笔拼团已经启动发货了无法再加入
     }
 }

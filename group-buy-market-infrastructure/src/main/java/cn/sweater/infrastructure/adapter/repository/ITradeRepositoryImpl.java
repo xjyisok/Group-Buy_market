@@ -250,11 +250,10 @@ public class ITradeRepositoryImpl implements ITradeRepository {
             notifyTask.setUuid(groupBuyTeamEntity.getTeamId()+Constants.UNDERLINE+TaskNotifyCategoryEnumVO.TRADE_SETTLEMENT.getCode()
                     +Constants.UNDERLINE+tradePaySuccessEntity.getOutTradeNo());
             notifyTask.setNotifyCategory(TaskNotifyCategoryEnumVO.TRADE_SETTLEMENT.getCode());
-            notifyTask.setParameterJson(JSON.toJSONString(new HashMap<String, Object>() {{
-                put("teamId", groupBuyTeamEntity.getTeamId());
-                put("outTradeNoList", outTradeNoList);
-            }}));
-
+            Map<String,Object>map=new HashMap<>();
+            map.put("teamId",groupBuyTeamEntity.getTeamId());
+            map.put("outTradeNoList",outTradeNoList);
+            notifyTask.setParameterJson(JSON.toJSONString(map));
             notifyTaskDao.insert(notifyTask);
         }
     }
@@ -337,11 +336,12 @@ public class ITradeRepositoryImpl implements ITradeRepository {
 
         // 1. incr 得到值，与总量和恢复量做对比。恢复量为系统失败时候记录的量。
         // 2. 从有组队量开始，相当于已经有了一个占用量，所以要 +1
+
         System.out.println(redisService.getAtomicLong(teamStockKey));
         long occupy = redisService.incr(teamStockKey) + 1;
-
+        System.out.println("occupy: " + occupy+"target: "+target+"validTime: "+"recoveryCount: "+recoveryCount);
         if (occupy > target + recoveryCount) {
-            redisService.setAtomicLong(teamStockKey, target);
+            //redisService.setAtomicLong(teamStockKey, target);
             return false;
         }
 
@@ -397,13 +397,13 @@ public class ITradeRepositoryImpl implements ITradeRepository {
         notifyTask.setNotifyCategory(TaskNotifyCategoryEnumVO.TRADE_UNPAID2REFUND.getCode());
         notifyTask.setUuid(tradeRefundOrderEntity.getTeamId()+Constants.UNDERLINE+TaskNotifyCategoryEnumVO.TRADE_UNPAID2REFUND.getCode()
         +Constants.UNDERLINE+tradeRefundOrderEntity.getOrderId());
-        notifyTask.setParameterJson(JSON.toJSONString(new HashMap<String, Object>() {{
-            put("type", RefundTypeEnumVO.UNPAID_UNLOCK.getCode());
-            put("teamId", tradeRefundOrderEntity.getTeamId());
-            put("userId", tradeRefundOrderEntity.getUserId());
-            put("orderId", tradeRefundOrderEntity.getOrderId());
-            put("activityId", tradeRefundOrderEntity.getActivityId());
-        }}));
+        Map<String,Object> map=new HashMap<>();
+        map.put("type", RefundTypeEnumVO.UNPAID_UNLOCK.getCode());
+        map.put("teamId", tradeRefundOrderEntity.getTeamId());
+        map.put("userId", tradeRefundOrderEntity.getUserId());
+        map.put("orderId", tradeRefundOrderEntity.getOrderId());
+        map.put("activityId", tradeRefundOrderEntity.getActivityId());
+        notifyTask.setParameterJson(JSON.toJSONString(map));
         notifyTaskDao.insert(notifyTask);
         return NotifyTaskEntity.builder()
                 .teamId(tradeRefundOrderEntity.getTeamId())
@@ -412,7 +412,7 @@ public class ITradeRepositoryImpl implements ITradeRepository {
                 .notifyMQ(notifyTask.getNotifyMQ())
                 .notifyCount(notifyTask.getNotifyCount())
                 .notifyStatus(notifyTask.getNotifyStatus())
-                .parameterJson(JSON.toJSONString(notifyTask.getParameterJson()))
+                .parameterJson(notifyTask.getParameterJson())
                 .uuid(notifyTask.getUuid())
                 .build();
     }
@@ -450,13 +450,13 @@ public class ITradeRepositoryImpl implements ITradeRepository {
         notifyTask.setNotifyCategory(TaskNotifyCategoryEnumVO.TRADE_PAID2REFUND.getCode());
         notifyTask.setUuid(tradeRefundOrderEntity.getTeamId()+Constants.UNDERLINE+TaskNotifyCategoryEnumVO.TRADE_PAID2REFUND.getCode()
                 +Constants.UNDERLINE+tradeRefundOrderEntity.getOrderId());
-        notifyTask.setParameterJson(JSON.toJSONString(new HashMap<String, Object>() {{
-            put("type", RefundTypeEnumVO.PAID_UNFORMED.getCode());
-            put("teamId", tradeRefundOrderEntity.getTeamId());
-            put("userId", tradeRefundOrderEntity.getUserId());
-            put("orderId", tradeRefundOrderEntity.getOrderId());
-            put("activityId", tradeRefundOrderEntity.getActivityId());
-        }}));
+        Map<String,Object> map=new HashMap<>();
+        map.put("type", RefundTypeEnumVO.PAID_UNFORMED.getCode());
+        map.put("teamId", tradeRefundOrderEntity.getTeamId());
+        map.put("userId", tradeRefundOrderEntity.getUserId());
+        map.put("orderId", tradeRefundOrderEntity.getOrderId());
+        map.put("activityId", tradeRefundOrderEntity.getActivityId());
+        notifyTask.setParameterJson(JSON.toJSONString(map));
         notifyTaskDao.insert(notifyTask);
         return NotifyTaskEntity.builder()
                 .teamId(tradeRefundOrderEntity.getTeamId())
@@ -465,7 +465,7 @@ public class ITradeRepositoryImpl implements ITradeRepository {
                 .notifyMQ(notifyTask.getNotifyMQ())
                 .notifyCount(notifyTask.getNotifyCount())
                 .notifyStatus(notifyTask.getNotifyStatus())
-                .parameterJson(JSON.toJSONString(notifyTask.getParameterJson()))
+                .parameterJson(notifyTask.getParameterJson())
                 .uuid(notifyTask.getUuid())
                 .build();
     }
@@ -512,13 +512,13 @@ public class ITradeRepositoryImpl implements ITradeRepository {
         notifyTask.setNotifyCategory(TaskNotifyCategoryEnumVO.TRADE_PAID_TEAM2REFUND.getCode());
         notifyTask.setUuid(tradeRefundOrderEntity.getTeamId()+Constants.UNDERLINE+TaskNotifyCategoryEnumVO.TRADE_PAID_TEAM2REFUND.getCode()
                 +Constants.UNDERLINE+tradeRefundOrderEntity.getOrderId());
-        notifyTask.setParameterJson(JSON.toJSONString(new HashMap<String, Object>() {{
-            put("type", RefundTypeEnumVO.PAID_FORMED.getCode());
-            put("teamId", tradeRefundOrderEntity.getTeamId());
-            put("userId", tradeRefundOrderEntity.getUserId());
-            put("orderId", tradeRefundOrderEntity.getOrderId());
-            put("activityId", tradeRefundOrderEntity.getActivityId());
-        }}));
+        Map<String,Object> map=new HashMap<>();
+        map.put("type", RefundTypeEnumVO.PAID_FORMED.getCode());
+        map.put("teamId", tradeRefundOrderEntity.getTeamId());
+        map.put("userId", tradeRefundOrderEntity.getUserId());
+        map.put("orderId", tradeRefundOrderEntity.getOrderId());
+        map.put("activityId", tradeRefundOrderEntity.getActivityId());
+        notifyTask.setParameterJson(JSON.toJSONString(map));
         notifyTaskDao.insert(notifyTask);
         return NotifyTaskEntity.builder()
                 .teamId(tradeRefundOrderEntity.getTeamId())
@@ -527,8 +527,33 @@ public class ITradeRepositoryImpl implements ITradeRepository {
                 .notifyMQ(notifyTask.getNotifyMQ())
                 .notifyCount(notifyTask.getNotifyCount())
                 .notifyStatus(notifyTask.getNotifyStatus())
-                .parameterJson(JSON.toJSONString(notifyTask.getParameterJson()))
+                .parameterJson(notifyTask.getParameterJson())
                 .uuid(notifyTask.getUuid())
                 .build();
+    }
+
+    @Override
+    public void refund2Recovery(String recoveryTeamStockKey, TeamRefundSuccess teamRefundSuccess) {
+        String orderId=teamRefundSuccess.getOrderId();
+        if(StringUtils.isBlank(recoveryTeamStockKey)||null==teamRefundSuccess){
+            return;
+        }
+        // 使用orderId作为锁的key，避免同一订单重复恢复库存
+        String lockKey = "refund_lock_" + orderId;
+        //尝试获取分布式锁
+        Boolean isAcquired=redisService.setNx(lockKey, 30L*24*60*60*1000,TimeUnit.MILLISECONDS);
+        if(!isAcquired){
+            log.warn("订单{}库存恢复操作已经在进行中，请勿重复操作",orderId);
+            return;
+        }
+        try{
+            redisService.incr(recoveryTeamStockKey);
+            log.info("订单 {} 恢复库存成功，恢复库存key: {}", orderId, recoveryTeamStockKey);
+        }catch (Exception e){
+            log.error("订单 {} 恢复库存失败，恢复库存key: {}", orderId, recoveryTeamStockKey, e);
+            //恢复库存失败允许重试
+            redisService.remove(lockKey);
+            throw e;
+        }
     }
 }

@@ -4,7 +4,9 @@ import cn.sweater.domain.trade.adapter.repository.ITradeRepository;
 import cn.sweater.domain.trade.model.aggergate.GroupBuyRefundAggregate;
 import cn.sweater.domain.trade.model.entity.NotifyTaskEntity;
 import cn.sweater.domain.trade.model.entity.TradeRefundOrderEntity;
+import cn.sweater.domain.trade.model.valobj.TeamRefundSuccess;
 import cn.sweater.domain.trade.service.ITradeTaskService;
+import cn.sweater.domain.trade.service.lock.factory.TradeRuleFilterFactory;
 import cn.sweater.domain.trade.service.refund.business.IRefundOrderStrategy;
 import cn.sweater.types.exception.AppException;
 import com.alibaba.fastjson.JSON;
@@ -41,5 +43,13 @@ public class Paid2RefundStrategy implements IRefundOrderStrategy {
             });
         }
 
+    }
+
+    @Override
+    public void restoreTeamStockLock(TeamRefundSuccess teamRefundSuccess) {
+        log.info("退单；恢复锁单量 - 已支付，未成团，但有锁单记录，要恢复锁单库存 {} {} {}",
+                teamRefundSuccess.getUserId(), teamRefundSuccess.getActivityId(), teamRefundSuccess.getTeamId());
+        String recoveryTeamStockKey= TradeRuleFilterFactory.generateRecoveryTeamStockKey(teamRefundSuccess.getTeamId(),teamRefundSuccess.getActivityId());
+        tradeRepository.refund2Recovery(recoveryTeamStockKey,teamRefundSuccess);
     }
 }
