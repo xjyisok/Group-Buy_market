@@ -7,6 +7,7 @@ import cn.sweater.domain.trade.model.entity.TradeRefundOrderEntity;
 import cn.sweater.domain.trade.model.valobj.TeamRefundSuccess;
 import cn.sweater.domain.trade.service.ITradeTaskService;
 import cn.sweater.domain.trade.service.lock.factory.TradeRuleFilterFactory;
+import cn.sweater.domain.trade.service.refund.business.AbstractRefundOrderStrategy;
 import cn.sweater.domain.trade.service.refund.business.IRefundOrderStrategy;
 import cn.sweater.types.exception.AppException;
 import com.alibaba.fastjson.JSON;
@@ -19,7 +20,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 @Service("paid2RefundStrategy")
 @Slf4j
-public class Paid2RefundStrategy implements IRefundOrderStrategy {
+public class Paid2RefundStrategy extends AbstractRefundOrderStrategy implements IRefundOrderStrategy {
     @Resource
     private ITradeRepository tradeRepository;
     @Resource
@@ -30,18 +31,19 @@ public class Paid2RefundStrategy implements IRefundOrderStrategy {
     public void refundOrder(TradeRefundOrderEntity tradeRefundOrderEntity) {
         NotifyTaskEntity notifyTaskEntity=tradeRepository.paid2Refund(GroupBuyRefundAggregate.buildpaid2RefundAggregate(tradeRefundOrderEntity,-1,-1));
         // 2. 发送MQ消息
-        if (null != notifyTaskEntity) {
-            threadPoolExecutor.execute(() -> {
-                Map<String, Integer> notifyResultMap = null;
-                try {
-                    notifyResultMap = tradeTaskService.execNotifyJob(notifyTaskEntity);
-                    log.info("回调通知交易退单 result:{}", JSON.toJSONString(notifyResultMap));
-                } catch (Exception e) {
-                    log.error("回调通知交易退单失败 result:{}", JSON.toJSONString(notifyResultMap), e);
-                    throw new AppException(e.getMessage());
-                }
-            });
-        }
+//        if (null != notifyTaskEntity) {
+//            threadPoolExecutor.execute(() -> {
+//                Map<String, Integer> notifyResultMap = null;
+//                try {
+//                    notifyResultMap = tradeTaskService.execNotifyJob(notifyTaskEntity);
+//                    log.info("回调通知交易退单 result:{}", JSON.toJSONString(notifyResultMap));
+//                } catch (Exception e) {
+//                    log.error("回调通知交易退单失败 result:{}", JSON.toJSONString(notifyResultMap), e);
+//                    throw new AppException(e.getMessage());
+//                }
+//            });
+//        }
+        sendRefundOrderMessage(notifyTaskEntity);
 
     }
 
@@ -49,7 +51,8 @@ public class Paid2RefundStrategy implements IRefundOrderStrategy {
     public void restoreTeamStockLock(TeamRefundSuccess teamRefundSuccess) {
         log.info("退单；恢复锁单量 - 已支付，未成团，但有锁单记录，要恢复锁单库存 {} {} {}",
                 teamRefundSuccess.getUserId(), teamRefundSuccess.getActivityId(), teamRefundSuccess.getTeamId());
-        String recoveryTeamStockKey= TradeRuleFilterFactory.generateRecoveryTeamStockKey(teamRefundSuccess.getTeamId(),teamRefundSuccess.getActivityId());
-        tradeRepository.refund2Recovery(recoveryTeamStockKey,teamRefundSuccess);
+//        String recoveryTeamStockKey= TradeRuleFilterFactory.generateRecoveryTeamStockKey(teamRefundSuccess.getTeamId(),teamRefundSuccess.getActivityId());
+//        tradeRepository.refund2Recovery(recoveryTeamStockKey,teamRefundSuccess);
+        refund2StockRecovery(teamRefundSuccess);
     }
 }

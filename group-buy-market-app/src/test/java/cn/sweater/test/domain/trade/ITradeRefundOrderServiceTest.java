@@ -29,7 +29,7 @@ public class ITradeRefundOrderServiceTest {
     private ITradeRefundOrderService tradeRefundOrderService;
 
     @Test
-    public void test_refundOrder() throws InterruptedException {
+    public void test_refundOrder() throws Exception {
         TradeRefundCommandEntity tradeRefundCommandEntity = TradeRefundCommandEntity.builder()
                 .userId("dsh")
                 .outTradeNo("528816594618")

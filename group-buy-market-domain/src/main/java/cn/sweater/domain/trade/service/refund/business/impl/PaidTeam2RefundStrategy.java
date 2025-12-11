@@ -8,6 +8,7 @@ import cn.sweater.domain.trade.model.entity.TradeRefundOrderEntity;
 import cn.sweater.domain.trade.model.valobj.TeamRefundSuccess;
 import cn.sweater.domain.trade.service.ITradeTaskService;
 import cn.sweater.domain.trade.service.lock.factory.TradeRuleFilterFactory;
+import cn.sweater.domain.trade.service.refund.business.AbstractRefundOrderStrategy;
 import cn.sweater.domain.trade.service.refund.business.IRefundOrderStrategy;
 import cn.sweater.types.enums.GroupBuyOrderEnumVO;
 import cn.sweater.types.exception.AppException;
@@ -21,7 +22,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 @Service("paidTeam2RefundStrategy")
 @Slf4j
-public class PaidTeam2RefundStrategy implements IRefundOrderStrategy {
+public class PaidTeam2RefundStrategy extends AbstractRefundOrderStrategy implements IRefundOrderStrategy {
     @Resource
     private ITradeRepository tradeRepository;
     @Resource
@@ -36,18 +37,19 @@ public class PaidTeam2RefundStrategy implements IRefundOrderStrategy {
         NotifyTaskEntity notifyTaskEntity=tradeRepository.paidTeam2Refund(GroupBuyRefundAggregate.buildpaidTeam2RefundAggregate(tradeRefundOrderEntity,-1,-1
         ,groupBuyOrderEnumVO));
         // 2. 发送MQ消息
-        if (null != notifyTaskEntity) {
-            threadPoolExecutor.execute(() -> {
-                Map<String, Integer> notifyResultMap = null;
-                try {
-                    notifyResultMap = tradeTaskService.execNotifyJob(notifyTaskEntity);
-                    log.info("回调通知交易退单 result:{}", JSON.toJSONString(notifyResultMap));
-                } catch (Exception e) {
-                    log.error("回调通知交易退单失败 result:{}", JSON.toJSONString(notifyResultMap), e);
-                    throw new AppException(e.getMessage());
-                }
-            });
-        }
+//        if (null != notifyTaskEntity) {
+//            threadPoolExecutor.execute(() -> {
+//                Map<String, Integer> notifyResultMap = null;
+//                try {
+//                    notifyResultMap = tradeTaskService.execNotifyJob(notifyTaskEntity);
+//                    log.info("回调通知交易退单 result:{}", JSON.toJSONString(notifyResultMap));
+//                } catch (Exception e) {
+//                    log.error("回调通知交易退单失败 result:{}", JSON.toJSONString(notifyResultMap), e);
+//                    throw new AppException(e.getMessage());
+//                }
+//            });
+//        }
+        sendRefundOrderMessage(notifyTaskEntity);
     }
 
     @Override
