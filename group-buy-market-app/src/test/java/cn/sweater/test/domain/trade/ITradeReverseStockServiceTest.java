@@ -72,8 +72,8 @@ public class ITradeReverseStockServiceTest {
     @Test
     public void test_lockMarketPayOrder_reverse() throws InterruptedException {
         LockMarketPayOrderRequestDTO lockMarketPayOrderRequestDTO = new LockMarketPayOrderRequestDTO();
-        lockMarketPayOrderRequestDTO.setUserId("xfg404");
-        lockMarketPayOrderRequestDTO.setTeamId("lWIb6uUY");
+        lockMarketPayOrderRequestDTO.setUserId("xfg406");
+        lockMarketPayOrderRequestDTO.setTeamId("wmryWwVy");
         lockMarketPayOrderRequestDTO.setActivityId(100123L);
         lockMarketPayOrderRequestDTO.setGoodsId("9890001");
         lockMarketPayOrderRequestDTO.setSource("s01");

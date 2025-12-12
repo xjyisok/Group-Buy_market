@@ -1,5 +1,7 @@
 package cn.sweater.infrastructure.adapter.repository;
 
+import cn.sweater.domain.activity.model.entity.UserGroupBuyOrderDetailEntity;
+import cn.sweater.domain.activity.model.entity.UserGroupBuyOrderListDetailEntity;
 import cn.sweater.domain.trade.adapter.repository.ITradeRepository;
 import cn.sweater.domain.trade.model.aggergate.GroupBuyOrderAggregate;
 import cn.sweater.domain.trade.model.aggergate.GroupBuyRefundAggregate;
@@ -32,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
@@ -116,6 +119,8 @@ public class ITradeRepositoryImpl implements ITradeRepository {
                     .status(0)
                     .notifyType(payDiscountEntity.getNotifyConfigVO().getNotifyType().getCode())
                     .build();
+            String cacheTeamEndTimeKey="group_buy_order_endTime_"+teamId;
+            redisService.setValue(cacheTeamEndTimeKey, calendar.getTime());
             groupBuyOrderDao.insert(groupBuyOrder);
         }
         else{
@@ -124,14 +129,15 @@ public class ITradeRepositoryImpl implements ITradeRepository {
                 throw new AppException(ResponseCode.E0005.getCode());
             }
         }
+        String cacheTeamEndTimeKey="group_buy_order_endTime_"+teamId;
         String orderId=RandomStringUtils.randomAlphanumeric(12);
         GroupBuyOrderList groupBuyOrderList=GroupBuyOrderList.builder()
                 .orderId(orderId)
                 .userId(userEntity.getUserId())
                 .teamId(teamId)
                 .activityId(payActivityEntity.getActivityId())
-                .startTime(payActivityEntity.getStartTime())
-                .endTime(payActivityEntity.getEndTime())
+                .startTime(new Date())
+                .endTime(redisService.getValue(cacheTeamEndTimeKey))
                 .goodsId(payDiscountEntity.getGoodsId())
                 .source(payDiscountEntity.getSource())
                 .channel(payDiscountEntity.getChannel())
@@ -555,5 +561,28 @@ public class ITradeRepositoryImpl implements ITradeRepository {
             redisService.remove(lockKey);
             throw e;
         }
+    }
+
+    @Override
+    public List<UserGroupBuyOrderListDetailEntity> queryTimeOutUnpaidOrder() {
+        List<GroupBuyOrderList> groupBuyOrderLists = groupBuyOrderListDao.queryTimeOutUnpaidOrder();
+        if (null == groupBuyOrderLists || groupBuyOrderLists.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<UserGroupBuyOrderListDetailEntity> userGroupBuyOrderListDetailEntities = new ArrayList<>();
+        for (GroupBuyOrderList groupBuyOrderList : groupBuyOrderLists) {
+            UserGroupBuyOrderListDetailEntity userGroupBuyOrderListDetailEntity = new UserGroupBuyOrderListDetailEntity();
+            userGroupBuyOrderListDetailEntity.setOutTradeNo(groupBuyOrderList.getOutTradeNo());
+            userGroupBuyOrderListDetailEntity.setUserId(groupBuyOrderList.getUserId());
+            userGroupBuyOrderListDetailEntity.setChannel(groupBuyOrderList.getChannel());
+            userGroupBuyOrderListDetailEntity.setSource(groupBuyOrderList.getSource());
+            userGroupBuyOrderListDetailEntity.setTeamId(groupBuyOrderList.getTeamId());
+            userGroupBuyOrderListDetailEntity.setActivityId(groupBuyOrderList.getActivityId());
+            userGroupBuyOrderListDetailEntity.setValidEndTime(groupBuyOrderList.getEndTime());
+            userGroupBuyOrderListDetailEntity.setValidStartTime(groupBuyOrderList.getStartTime());
+            userGroupBuyOrderListDetailEntities.add(userGroupBuyOrderListDetailEntity);
+        }
+        return userGroupBuyOrderListDetailEntities;
+
     }
 }

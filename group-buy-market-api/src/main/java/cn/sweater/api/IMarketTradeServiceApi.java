@@ -1,9 +1,6 @@
 package cn.sweater.api;
 
-import cn.sweater.api.dto.LockMarketPayOrderRequestDTO;
-import cn.sweater.api.dto.LockMarketPayOrderResponseDTO;
-import cn.sweater.api.dto.SettlementMarketPayOrderRequestDTO;
-import cn.sweater.api.dto.SettlementMarketPayOrderResponseDTO;
+import cn.sweater.api.dto.*;
 import cn.sweater.api.response.Response;
 
 public interface IMarketTradeServiceApi {
@@ -15,6 +12,11 @@ public interface IMarketTradeServiceApi {
      * @return 结算结果信息
      */
     Response<SettlementMarketPayOrderResponseDTO> settlementMarketPayOrder(SettlementMarketPayOrderRequestDTO requestDTO) throws Exception;
-
-
+    /**
+     * 营销退单
+     *
+     * @param requestDTO 退单订单信息
+     * @return 吞蛋结果信息
+     */
+    Response<RefundMarketPayOrderResponseDTO> refundMarketPayOrder(RefundMarketPayOrderRequestDTO requestDTO);
 }

@@ -1,5 +1,7 @@
 package cn.sweater.domain.trade.adapter.repository;
 
+import cn.sweater.domain.activity.model.entity.UserGroupBuyOrderDetailEntity;
+import cn.sweater.domain.activity.model.entity.UserGroupBuyOrderListDetailEntity;
 import cn.sweater.domain.trade.model.aggergate.GroupBuyOrderAggregate;
 import cn.sweater.domain.trade.model.aggergate.GroupBuyRefundAggregate;
 import cn.sweater.domain.trade.model.aggergate.GroupBuyTeamSettlementAggregate;
@@ -50,4 +52,6 @@ public interface ITradeRepository {
     NotifyTaskEntity paidTeam2Refund(GroupBuyRefundAggregate groupBuyRefundAggregate);
 
     void refund2Recovery(String recoveryTeamStockKey, TeamRefundSuccess teamRefundSuccess);
+
+    List<UserGroupBuyOrderListDetailEntity> queryTimeOutUnpaidOrder();
 }

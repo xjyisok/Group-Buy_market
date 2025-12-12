@@ -60,7 +60,9 @@ public class IActivityRepositoryImpl extends AbstractRepository implements IActi
 
         String disCountId = groupBuyActivity.getDiscountId();
         String discountCacheKey=GroupBuyDiscount.cacheRedisKey(disCountId);
+        //System.out.println(disCountId);
         GroupBuyDiscount groupBuyDiscount=getFromCacheOrDb(discountCacheKey,()->groupBuyDiscountDao.queryGroupBuyActivityDiscountByDiscountId(disCountId));
+        //System.out.println("Discount!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:"+groupBuyDiscount);
 //        GroupBuyDiscount groupBuyDiscount=redisService.getValue(discountCacheKey);
 //        if(groupBuyDiscount==null){
 //            groupBuyDiscount=groupBuyDiscountDao.queryGroupBuyActivityDiscountByDiscountId(disCountId);

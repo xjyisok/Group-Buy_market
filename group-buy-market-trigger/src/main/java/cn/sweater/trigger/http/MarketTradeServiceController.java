@@ -1,10 +1,7 @@
 package cn.sweater.trigger.http;
 
 import cn.sweater.api.IMarketTradeServiceApi;
-import cn.sweater.api.dto.LockMarketPayOrderRequestDTO;
-import cn.sweater.api.dto.LockMarketPayOrderResponseDTO;
-import cn.sweater.api.dto.SettlementMarketPayOrderRequestDTO;
-import cn.sweater.api.dto.SettlementMarketPayOrderResponseDTO;
+import cn.sweater.api.dto.*;
 import cn.sweater.api.response.Response;
 import cn.sweater.domain.activity.model.entity.MarketProductEntity;
 import cn.sweater.domain.activity.model.entity.TrialBalanceEntity;
@@ -16,6 +13,7 @@ import cn.sweater.domain.trade.model.valobj.NotifyConfigVO;
 import cn.sweater.domain.trade.model.valobj.NotifyTypeEnumVO;
 import cn.sweater.domain.trade.model.valobj.TradeOrderStatusEnumVO;
 import cn.sweater.domain.trade.service.ITradeOrderService;
+import cn.sweater.domain.trade.service.ITradeRefundOrderService;
 import cn.sweater.domain.trade.service.ITradeSettlementOrderService;
 import cn.sweater.types.enums.ResponseCode;
 import cn.sweater.types.exception.AppException;
@@ -39,6 +37,8 @@ public class MarketTradeServiceController implements IMarketTradeServiceApi {
     private ITradeOrderService tradeOrderService;
     @Resource
     private ITradeSettlementOrderService tradeSettlementOrderService;
+    @Resource
+    private ITradeRefundOrderService tradeRefundOrderService;
     //NOTE用户点击参与拼团发起的请求
     @RequestMapping(value = "lock_market_pay_order", method = RequestMethod.POST)
     @Override
@@ -213,6 +213,56 @@ public class MarketTradeServiceController implements IMarketTradeServiceApi {
         }catch (Exception e) {
             log.info("营销交易结算失败:{} requestDTO:{}", requestDTO.getUserId(), JSON.toJSONString(requestDTO));
             return Response.<SettlementMarketPayOrderResponseDTO>builder()
+                    .code(ResponseCode.UN_ERROR.getCode())
+                    .info(ResponseCode.UN_ERROR.getInfo())
+                    .build();
+        }
+    }
+
+    @Override
+    @RequestMapping(value = "refund_market_pay_order", method = RequestMethod.POST)
+    public Response<RefundMarketPayOrderResponseDTO> refundMarketPayOrder(RefundMarketPayOrderRequestDTO requestDTO) {
+        try {
+            log.info("营销拼团退单开始:{} outTradeNo:{}", requestDTO.getUserId(), requestDTO.getOutTradeNo());
+            if (StringUtils.isBlank(requestDTO.getUserId()) || StringUtils.isBlank(requestDTO.getOutTradeNo()) || StringUtils.isBlank(requestDTO.getSource()) || StringUtils.isBlank(requestDTO.getChannel())) {
+                return Response.<RefundMarketPayOrderResponseDTO>builder()
+                        .code(ResponseCode.ILLEGAL_PARAMETER.getCode())
+                        .info(ResponseCode.ILLEGAL_PARAMETER.getInfo())
+                        .build();
+            }
+
+            // 1. 退单服务
+            TradeRefundBehaviorEntity tradeRefundBehaviorEntity = tradeRefundOrderService.refundOrder(TradeRefundCommandEntity.builder()
+                    .userId(requestDTO.getUserId())
+                    .outTradeNo(requestDTO.getOutTradeNo())
+                    .source(requestDTO.getSource())
+                    .channel(requestDTO.getChannel())
+                    .build());
+            RefundMarketPayOrderResponseDTO responseDTO = RefundMarketPayOrderResponseDTO.builder()
+                    .userId(tradeRefundBehaviorEntity.getUserId())
+                    .orderId(tradeRefundBehaviorEntity.getOrderId())
+                    .teamId(tradeRefundBehaviorEntity.getTeamId())
+                    .code(tradeRefundBehaviorEntity.getTradeRefundBehaviorEnum().getCode())
+                    .info(tradeRefundBehaviorEntity.getTradeRefundBehaviorEnum().getInfo())
+                    .build();
+
+            // 返回结果
+            Response<RefundMarketPayOrderResponseDTO> response = Response.<RefundMarketPayOrderResponseDTO>builder()
+                    .code(ResponseCode.SUCCESS.getCode())
+                    .info(ResponseCode.SUCCESS.getInfo())
+                    .data(responseDTO)
+                    .build();
+            log.info("营销拼团退单完成:{} outTradeNo:{} response:{}", requestDTO.getUserId(), requestDTO.getOutTradeNo(), JSON.toJSONString(response));
+            return response;
+        } catch (AppException e) {
+            log.error("营销拼团退单异常:{} RefundMarketPayOrderRequestDTO:{}", requestDTO.getUserId(), JSON.toJSONString(requestDTO), e);
+            return Response.<RefundMarketPayOrderResponseDTO>builder()
+                    .code(e.getCode())
+                    .info(e.getInfo())
+                    .build();
+        } catch (Exception e) {
+            log.error("营销拼团退单失败:{} RefundMarketPayOrderRequestDTO:{}", requestDTO.getUserId(), JSON.toJSONString(requestDTO), e);
+            return Response.<RefundMarketPayOrderResponseDTO>builder()
                     .code(ResponseCode.UN_ERROR.getCode())
                     .info(ResponseCode.UN_ERROR.getInfo())
                     .build();

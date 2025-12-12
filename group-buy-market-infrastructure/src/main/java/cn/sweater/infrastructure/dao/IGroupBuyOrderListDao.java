@@ -1,5 +1,6 @@
 package cn.sweater.infrastructure.dao;
 
+import cn.sweater.domain.activity.model.entity.UserGroupBuyOrderDetailEntity;
 import cn.sweater.infrastructure.dao.po.GroupBuyOrderList;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -35,4 +36,6 @@ public interface IGroupBuyOrderListDao {
     int paid2Refund(GroupBuyOrderList groupBuyOrderListReq);
 
     int paidTeam2Refund(GroupBuyOrderList groupBuyOrderListReq);
+
+    List<GroupBuyOrderList> queryTimeOutUnpaidOrder();
 }

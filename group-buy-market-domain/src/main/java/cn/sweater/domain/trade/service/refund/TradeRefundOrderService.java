@@ -1,6 +1,8 @@
 package cn.sweater.domain.trade.service.refund;
 
 import cn.bugstack.wrench.design.framework.link.model2.chain.BusinessLinkedList;
+import cn.sweater.domain.activity.model.entity.UserGroupBuyOrderDetailEntity;
+import cn.sweater.domain.activity.model.entity.UserGroupBuyOrderListDetailEntity;
 import cn.sweater.domain.trade.adapter.repository.ITradeRepository;
 import cn.sweater.domain.trade.model.entity.*;
 import cn.sweater.domain.trade.model.valobj.RefundTypeEnumVO;
@@ -14,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -74,5 +78,10 @@ public class TradeRefundOrderService implements ITradeRefundOrderService {
         RefundTypeEnumVO refundTypeEnumVO=RefundTypeEnumVO.getRefundTypeEnumVOByCode(type);
         IRefundOrderStrategy refundOrderStrategy = strategyMap.get(refundTypeEnumVO.getStrategy());
         refundOrderStrategy.restoreTeamStockLock(teamRefundSuccess);
+    }
+
+    @Override
+    public List<UserGroupBuyOrderListDetailEntity> queryTimeOutUnpaidOrder() {
+        return tradeRepository.queryTimeOutUnpaidOrder();
     }
 }
