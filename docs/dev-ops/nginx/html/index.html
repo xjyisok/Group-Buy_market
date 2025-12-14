@@ -91,9 +91,11 @@
 <div class="action-bar">
     <button class="action-btn buy-alone"></button>
     <button class="action-btn group-buy"></button>
+    <button type="button" class="action-btn order-list-btn" onclick="window.location.href='order-list.html'">我的订单</button>
 </div>
 
 <script src="js/index.js"></script>
+<script src="js/common.js"></script>
 <script>
     // 新增支付确认函数
     function showPaymentConfirm(price) {
@@ -111,8 +113,8 @@
         <p>登录密码：111111</p>
         <p>支付密码：111111</p>
         <div class="modal-buttons">
-            <button class="confirm-btn">确认支付</button>
-            <button class="cancel-btn">取消支付</button>
+            <button type="button" class="confirm-btn">确认支付</button>
+            <button type="button" class="cancel-btn">取消支付</button>
         </div>
     `;
 
@@ -185,15 +187,19 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         // 根据测试诉求，设置基础地址
-        var sPayMallUrl = "http://127.0.0.1:8080";
-        var groupBuyMarketUrl = "http://127.0.0.1:8091";
+        // var sPayMallUrl = "http://127.0.0.1:8080";
+        // var groupBuyMarketUrl = "http://127.0.0.1:8091";
+        var sPayMallUrl = AppConfig.sPayMallUrl;
+        var groupBuyMarketUrl = AppConfig.groupBuyMarketUrl;
+        var goodsId = AppConfig.goodsId;
+
         //NOTE公网部署的时候改成注释的
         /**
          var sPayMallUrl = "http://127.0.0.1:80";
          var groupBuyMarketUrl = "http://127.0.0.1:9091";
          */
 
-        var goodsId = "9890001";
+        //var goodsId = "9890001";
 
         // 获取信息
         var userId = getCookie("loginToken");

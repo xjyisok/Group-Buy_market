@@ -40,6 +40,7 @@ public class RefundOrderNodeFilter implements ILogicHandler<TradeRefundCommandEn
                 .activityId(groupBuyTeamEntity.getActivityId())
                 .orderId(marketPayOrderEntity.getOrderId())
                 .teamId(marketPayOrderEntity.getTeamId())
+                .outTradeNo(tradeRefundCommandEntity.getOutTradeNo())
                 .build());
         return  TradeRefundBehaviorEntity.builder()
                 .userId(tradeRefundCommandEntity.getUserId())

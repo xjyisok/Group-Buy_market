@@ -27,9 +27,9 @@ public class TeamRefundTopicListener {
     )
     public void Listener(String message) {
         log.info("接收到退单成功消息，开始进行库存恢复:{}", message);
-        //1. 解析退款信息
+        //1. 解析退单信息
         TeamRefundSuccess teamRefundSuccess = JSON.parseObject(message, TeamRefundSuccess.class);
-        //2. 退款逻辑
+        //2. 退单逻辑
         try{
             tradeRefundOrderService.restoreTeamStockLock(teamRefundSuccess);
             log.info("库存恢复成功{}", JSON.toJSONString(teamRefundSuccess));

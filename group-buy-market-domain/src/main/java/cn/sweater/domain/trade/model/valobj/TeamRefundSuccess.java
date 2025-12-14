@@ -13,5 +13,6 @@ public class TeamRefundSuccess {
     private String userId;
     private String orderId;
     private Long activityId;
+    private String outTradeNo;
 
 }

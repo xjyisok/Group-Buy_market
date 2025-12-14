@@ -171,6 +171,14 @@ body {
     font-size: 16px;
     cursor: pointer;
 }
+.order-list-btn {
+    background: #f0f0f0;
+    color: #666;
+    font-size: 14px;
+}
+.order-list-btn:hover {
+    background: #e0e0e0;
+}
 .buy-alone {
     background: #ffece5;
     color: #ff5000;

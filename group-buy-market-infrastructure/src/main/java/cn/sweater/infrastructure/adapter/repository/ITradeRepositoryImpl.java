@@ -409,6 +409,7 @@ public class ITradeRepositoryImpl implements ITradeRepository {
         map.put("userId", tradeRefundOrderEntity.getUserId());
         map.put("orderId", tradeRefundOrderEntity.getOrderId());
         map.put("activityId", tradeRefundOrderEntity.getActivityId());
+        map.put("outTradeNo", tradeRefundOrderEntity.getOutTradeNo());
         notifyTask.setParameterJson(JSON.toJSONString(map));
         notifyTaskDao.insert(notifyTask);
         return NotifyTaskEntity.builder()
@@ -462,6 +463,7 @@ public class ITradeRepositoryImpl implements ITradeRepository {
         map.put("userId", tradeRefundOrderEntity.getUserId());
         map.put("orderId", tradeRefundOrderEntity.getOrderId());
         map.put("activityId", tradeRefundOrderEntity.getActivityId());
+        map.put("outTradeNo", tradeRefundOrderEntity.getOutTradeNo());
         notifyTask.setParameterJson(JSON.toJSONString(map));
         notifyTaskDao.insert(notifyTask);
         return NotifyTaskEntity.builder()
@@ -524,6 +526,7 @@ public class ITradeRepositoryImpl implements ITradeRepository {
         map.put("userId", tradeRefundOrderEntity.getUserId());
         map.put("orderId", tradeRefundOrderEntity.getOrderId());
         map.put("activityId", tradeRefundOrderEntity.getActivityId());
+        map.put("outTradeNo", tradeRefundOrderEntity.getOutTradeNo());
         notifyTask.setParameterJson(JSON.toJSONString(map));
         notifyTaskDao.insert(notifyTask);
         return NotifyTaskEntity.builder()
