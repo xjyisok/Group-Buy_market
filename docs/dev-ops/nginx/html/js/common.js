@@ -1,13 +1,12 @@
 // 公共配置和工具函数
 const AppConfig = {
     // 基础地址配置
-    sPayMallUrl: "http://127.0.0.1:8080",
-    groupBuyMarketUrl: "http://127.0.0.1:8091",
+    // sPayMallUrl: "http://127.0.0.1:8080",
+    // groupBuyMarketUrl: "http://127.0.0.1:8091",
     //NOTE公网部署的时候改成注释的
-    /**
-     var sPayMallUrl = "http://127.0.0.1:80";
-     var groupBuyMarketUrl = "http://127.0.0.1:9091";
-     */
+     sPayMallUrl: "http://127.0.0.1:80",
+     groupBuyMarketUrl: "http://127.0.0.1:8092",
+
 
     goodsId: "9890001"
 };
