@@ -177,6 +177,12 @@
                 <version>7.3</version>
             </dependency>
 
+            <dependency>
+                <groupId>plus.gaga.middleware</groupId>
+                <artifactId>db-router-spring-boot-starter</artifactId>
+                <version>1.0.4</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

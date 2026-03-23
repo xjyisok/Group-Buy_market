@@ -113,6 +113,13 @@
             order_id = #{orderId} and
             status = 1
     </update>
+    <update id="syncOrderStatus2Complete" parameterType="cn.sweater.infrastructure.dao.po.GroupBuyOrderList">
+        update group_buy_order_list
+        set status = 1, out_trade_time = now(), update_time = now()
+        where out_trade_no = #{outTradeNo}
+          and status = 0
+    </update>
+
     <select id="queryTimeOutUnpaidOrder" resultMap="dataMap">
         select user_id, team_id, order_id, activity_id, start_time,
                end_time, goods_id, source, channel, original_price, deduction_price,

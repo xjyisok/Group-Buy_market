@@ -38,4 +38,6 @@ public interface IGroupBuyOrderListDao {
     int paidTeam2Refund(GroupBuyOrderList groupBuyOrderListReq);
 
     List<GroupBuyOrderList> queryTimeOutUnpaidOrder();
+
+    int syncOrderStatus2Complete(GroupBuyOrderList req);
 }

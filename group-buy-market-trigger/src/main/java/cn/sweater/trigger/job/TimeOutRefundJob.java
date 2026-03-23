@@ -23,7 +23,7 @@ public class TimeOutRefundJob {
     @Resource
     private RedissonClient redissonClient;
 
-    @Scheduled(cron = "0/15 * * * * ?")
+    @Scheduled(cron = "0 0/10 * * * ?")
     public void exec() {
         RLock lock = redissonClient.getLock("group_buy_market_timeout_refund_job_exec");
         try {

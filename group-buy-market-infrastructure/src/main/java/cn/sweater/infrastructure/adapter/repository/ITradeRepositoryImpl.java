@@ -17,6 +17,7 @@ import cn.sweater.infrastructure.dao.po.GroupBuyOrder;
 import cn.sweater.infrastructure.dao.po.GroupBuyOrderList;
 import cn.sweater.infrastructure.dao.po.NotifyTask;
 import cn.sweater.infrastructure.dcc.DCCService;
+import cn.sweater.infrastructure.event.EventPublisher;
 import cn.sweater.infrastructure.redis.IRedisService;
 import cn.sweater.types.common.Constants;
 import cn.sweater.types.enums.ActivityStatusEnumVO;
@@ -51,6 +52,8 @@ public class ITradeRepositoryImpl implements ITradeRepository {
     private IRedisService redisService;
     @Resource
     DCCService dccService;
+    @Resource
+    EventPublisher eventPublisher;
     @Value("${spring.rabbitmq.config.producer.topic_team_success.routing_key}")
     private String topic_team_success;
     @Value("${spring.rabbitmq.config.producer.topic_team_refund.routing_key}")
@@ -120,8 +123,8 @@ public class ITradeRepositoryImpl implements ITradeRepository {
                     .notifyType(payDiscountEntity.getNotifyConfigVO().getNotifyType().getCode())
                     .build();
             String cacheTeamEndTimeKey="group_buy_order_endTime_"+teamId;
-            redisService.setValue(cacheTeamEndTimeKey, calendar.getTime());
             groupBuyOrderDao.insert(groupBuyOrder);
+            redisService.setValue(cacheTeamEndTimeKey, calendar.getTime());
         }
         else{
             int updateNum=groupBuyOrderDao.updateAddLockCount(teamId);
@@ -153,6 +156,13 @@ public class ITradeRepositoryImpl implements ITradeRepository {
         } catch (Exception e) {
             throw new RuntimeException(ResponseCode.INDEX_EXCEPTION.getCode(),e);
         }
+        // 投递30分钟死信延迟消息，超时自动触发关单
+        Map<String, String> closeMsg = new HashMap<>();
+        closeMsg.put("outTradeNo", groupBuyOrderList.getOutTradeNo());
+        closeMsg.put("userId", groupBuyOrderList.getUserId());
+        closeMsg.put("source", groupBuyOrderList.getSource());
+        closeMsg.put("channel", groupBuyOrderList.getChannel());
+        eventPublisher.publishCloseOrderDelay(JSON.toJSONString(closeMsg));
         return MarketPayOrderEntity.builder()
                 .teamId(teamId)
                 .orderId(orderId)
@@ -161,6 +171,14 @@ public class ITradeRepositoryImpl implements ITradeRepository {
                 .payPrice(payDiscountEntity.getPayPrice())
                 .originalPrice(payDiscountEntity.getOriginalPrice())
                 .build();
+    }
+
+    @Override
+    public void syncOrderStatus2Complete(String outTradeNo) {
+        GroupBuyOrderList req = new GroupBuyOrderList();
+        req.setOutTradeNo(outTradeNo);
+        groupBuyOrderListDao.syncOrderStatus2Complete(req);
+        log.info("临界并发修正：订单状态 0→1，outTradeNo:{}", outTradeNo);
     }
 
     @Override

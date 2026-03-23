@@ -24,6 +24,22 @@ public class EventPublisher {
     @Value("${spring.rabbitmq.config.producer.exchange}")
     private String exchangeName;
 
+    @Value("${spring.rabbitmq.config.close-order.delay-queue}")
+    private String closeOrderDelayQueue;
+
+    public void publishCloseOrderDelay(String message) {
+        try {
+            rabbitTemplate.convertAndSend(closeOrderDelayQueue, message, m -> {
+                m.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+                return m;
+            });
+            log.info("投递超时关单延迟消息成功 message:{}", message);
+        } catch (Exception e) {
+            log.error("投递超时关单延迟消息失败 message:{}", message, e);
+            // 不抛出，不影响主流程，由定时任务兜底
+        }
+    }
+
     public void publish(String routingKey, String message) {
         try {
             //System.out.println("发送的消息topic" + routingKey + "消息" + message);

@@ -54,4 +54,10 @@ public interface ITradeRepository {
     void refund2Recovery(String recoveryTeamStockKey, TeamRefundSuccess teamRefundSuccess);
 
     List<UserGroupBuyOrderListDetailEntity> queryTimeOutUnpaidOrder();
+
+    /**
+     * 临界并发时，将本地订单状态同步为已完成（status 0→1）
+     * @param outTradeNo 外部交易单号
+     */
+    void syncOrderStatus2Complete(String outTradeNo);
 }

@@ -64,6 +64,11 @@ spring:
           routing_key: topic.team_refund
           # 消费队列
           queue: group_buy_market_queue_2_topic_team_refund
+      # 超时关单死信队列配置
+      close-order:
+        dlx-exchange: group_buy_market_dlx_exchange
+        delay-queue: group_buy_market_queue_delay_close_order
+        close-queue: group_buy_market_queue_close_order
 
 
 
@@ -113,6 +118,18 @@ management:
         enabled: true # 启用Prometheus
   prometheus:
     enabled: true # 启用Prometheus端点
+
+# 支付宝配置（沙箱）
+alipay:
+  gatewayUrl: https://openapi-sandbox.dl.alipaydev.com/gateway.do
+  app_id: 你的沙箱AppId
+  merchant_private_key: 你的商户私钥
+  alipay_public_key: 支付宝公钥
+  notify_url: http://你的域名/api/notify
+  return_url: http://你的域名/api/return
+  sign_type: RSA2
+  charset: utf-8
+  format: json
 
 # 日志
 logging:

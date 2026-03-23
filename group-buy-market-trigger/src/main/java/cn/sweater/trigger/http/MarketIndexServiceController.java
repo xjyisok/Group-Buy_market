@@ -124,6 +124,5 @@ public class MarketIndexServiceController implements IMarketIndexService {
                 .code(ResponseCode.RATE_LIMITER.getCode())
                 .info(ResponseCode.RATE_LIMITER.getInfo())
                 .build();
-
     }
 }
