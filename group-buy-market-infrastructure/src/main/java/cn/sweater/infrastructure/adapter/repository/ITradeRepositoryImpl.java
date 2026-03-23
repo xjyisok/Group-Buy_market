@@ -354,32 +354,7 @@ public class ITradeRepositoryImpl implements ITradeRepository {
 
     @Override
     public boolean occupyTeamStock(String teamStockKey, String recoveryTeamStockKey, Integer target, Integer validTime) {
-        // 失败恢复量
-        Long recoveryCount = redisService.getAtomicLong(recoveryTeamStockKey);
-        recoveryCount = null == recoveryCount ? 0 : recoveryCount;
-
-        // 1. incr 得到值，与总量和恢复量做对比。恢复量为系统失败时候记录的量。
-        // 2. 从有组队量开始，相当于已经有了一个占用量，所以要 +1
-
-        System.out.println(redisService.getAtomicLong(teamStockKey));
-        long occupy = redisService.incr(teamStockKey) + 1;
-        System.out.println("occupy: " + occupy+"target: "+target+"validTime: "+"recoveryCount: "+recoveryCount);
-        if (occupy > target + recoveryCount) {
-            //redisService.setAtomicLong(teamStockKey, target);
-            return false;
-        }
-
-        // 1. 给每个产生的值加锁为兜底设计，虽然incr操作是原子的，基本不会产生一样的值。但在实际生产中，遇到过集群的运维配置问题，以及业务运营配置数据问题，导致incr得到的值相同。
-        // 2. validTime + 60分钟，是一个延后时间的设计，让数据保留时间稍微长一些，便于排查问题。
-        String lockKey = teamStockKey + Constants.UNDERLINE + occupy;
-        Boolean lock = redisService.setNx(lockKey, validTime + 60, TimeUnit.MINUTES);
-
-        if (!lock) {
-            log.info("组队库存加锁失败 {}", lockKey);
-        }
-
-        return lock;
-
+        return redisService.occupyTeamStockByLua(teamStockKey, recoveryTeamStockKey, target, validTime);
     }
 
     @Override

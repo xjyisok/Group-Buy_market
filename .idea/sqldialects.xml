@@ -3,6 +3,8 @@
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/docs/dev-ops/mysql/sql/grafana.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/docs/dev-ops/mysql/sql/group_buy_market.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/docs/dev-ops/mysql/sql/group_buy_market_01.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/docs/dev-ops/mysql/sql/group_buy_market_02.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/docs/tag/v1.0/mysql/sql/group_buy_market.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/docs/tag/v1.0/mysql/sql/xfg-frame-archetype.sql" dialect="GenericSQL" />
   </component>

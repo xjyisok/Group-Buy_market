@@ -178,6 +178,35 @@ public class RedissonService implements IRedisService {
     }
 
     @Override
+    public boolean occupyTeamStockByLua(String teamStockKey, String recoveryTeamStockKey, Integer target, Integer validTime) {
+        // 原子 Lua 脚本：读恢复量 + incr + 判断 + setNx 幂等锁，全部在单次 eval 内完成
+        String luaScript =
+            "local recovery = tonumber(redis.call('GET', KEYS[2])) or 0\n" +
+            "local occupy = redis.call('INCR', KEYS[1]) + 1\n" +
+            "local target = tonumber(ARGV[1])\n" +
+            "local validTime = tonumber(ARGV[2])\n" +
+            "if occupy > target + recovery then\n" +
+            "    return 0\n" +
+            "end\n" +
+            "local lockKey = KEYS[1] .. '_' .. occupy\n" +
+            "local locked = redis.call('SET', lockKey, '1', 'NX', 'EX', (validTime + 60) * 60)\n" +
+            "if locked then\n" +
+            "    return 1\n" +
+            "else\n" +
+            "    return 0\n" +
+            "end";
+        RScript script = redissonClient.getScript();
+        Long result = script.eval(
+            RScript.Mode.READ_WRITE,
+            luaScript,
+            RScript.ReturnType.INTEGER,
+            java.util.Arrays.asList(teamStockKey, recoveryTeamStockKey),
+            Long.valueOf(target), Long.valueOf(validTime)
+        );
+        return result != null && result == 1L;
+    }
+
+    @Override
     public RBitSet getBitSet(String key) {
         return redissonClient.getBitSet(key);
     }

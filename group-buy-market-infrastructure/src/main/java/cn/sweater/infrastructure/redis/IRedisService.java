@@ -273,6 +273,18 @@ public interface IRedisService {
 
     RBitSet getBitSet(String key);
 
+    /**
+     * Lua 脚本原子扣减组队库存
+     * 一次 eval 完成：读 recoveryCount → incr → 判断超量 → setNx 幂等锁
+     *
+     * @param teamStockKey         库存自增 key
+     * @param recoveryTeamStockKey 失败补偿 key
+     * @param target               目标拼团人数
+     * @param validTime            有效期（分钟）
+     * @return true=扣减成功，false=库存不足或幂等锁抢占失败
+     */
+    boolean occupyTeamStockByLua(String teamStockKey, String recoveryTeamStockKey, Integer target, Integer validTime);
+
     default int getIndexFromUserId(String userId) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
