@@ -45,4 +45,15 @@ public interface IGroupBuyOrderDao {
     int paidTeam2Refund(GroupBuyOrder groupBuyOrderReq);
 
     int paidTeam2RefundFail(GroupBuyOrder groupBuyOrderReq);
+
+    /**
+     * 关闭超时未成功的拼团，只允许关 status=0 且 valid_end_time < now() 的团
+     * @return 影响行数，0 表示团已被结算为 COMPLETE，无需退款
+     */
+    int closeTimeOutTeam(String teamId);
+
+    /**
+     * 查询超时且仍为 PROGRESS 状态的团 teamId 列表
+     */
+    List<String> queryTimeOutProgressTeams();
 }

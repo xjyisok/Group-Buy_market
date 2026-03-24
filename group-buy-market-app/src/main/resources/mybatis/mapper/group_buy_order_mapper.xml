@@ -143,6 +143,29 @@
             team_id = #{teamId} and (status = 1 or status = 3) and complete_count = 1
     </update>
 
+    <!-- 关闭超时未成功的拼团，只关 PROGRESS 且已超时的团，affected rows=0 说明团已结算为COMPLETE，无需退款 -->
+    <update id="closeTimeOutTeam" parameterType="java.lang.String">
+        <![CDATA[
+        update group_buy_order
+        set status = 2, update_time = now()
+        where team_id = #{teamId}
+          and status = 0
+          and valid_end_time < now()
+        ]]>
+    </update>
+
+    <!-- 查询超时且仍为 PROGRESS 状态的团 teamId 列表，每次最多取20条 -->
+    <select id="queryTimeOutProgressTeams" resultType="java.lang.String">
+        <![CDATA[
+        select team_id from group_buy_order
+        where status = 0
+          and valid_end_time < now()
+        limit 20
+        ]]>
+    </select>
+
+</mapper>
+
 
 
 

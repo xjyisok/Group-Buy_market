@@ -581,4 +581,43 @@ public class ITradeRepositoryImpl implements ITradeRepository {
         return userGroupBuyOrderListDetailEntities;
 
     }
+
+    @Override
+    public int closeTimeOutTeam(String teamId) {
+        int affected = groupBuyOrderDao.closeTimeOutTeam(teamId);
+        if (affected == 0) {
+            log.info("关团操作：团已被结算为COMPLETE，跳过关团 teamId:{}", teamId);
+        } else {
+            log.info("关团操作：超时团关闭成功 teamId:{}", teamId);
+        }
+        return affected;
+    }
+
+    @Override
+    public List<String> queryTimeOutProgressTeams() {
+        return groupBuyOrderDao.queryTimeOutProgressTeams();
+    }
+
+    @Override
+    public List<UserGroupBuyOrderListDetailEntity> queryUnRefundedOrdersByTeamId(String teamId) {
+        List<GroupBuyOrderList> list = groupBuyOrderListDao.queryUnRefundedOrdersByTeamId(teamId);
+        if (null == list || list.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<UserGroupBuyOrderListDetailEntity> result = new ArrayList<>();
+        for (GroupBuyOrderList item : list) {
+            UserGroupBuyOrderListDetailEntity entity = new UserGroupBuyOrderListDetailEntity();
+            entity.setOutTradeNo(item.getOutTradeNo());
+            entity.setUserId(item.getUserId());
+            entity.setChannel(item.getChannel());
+            entity.setSource(item.getSource());
+            entity.setTeamId(item.getTeamId());
+            entity.setActivityId(item.getActivityId());
+            entity.setValidEndTime(item.getEndTime());
+            entity.setValidStartTime(item.getStartTime());
+            entity.setStatus(item.getStatus());
+            result.add(entity);
+        }
+        return result;
+    }
 }

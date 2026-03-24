@@ -3,6 +3,7 @@ package cn.sweater.domain.trade.model.entity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -25,5 +26,19 @@ public class TradeRefundCommandEntity {
 
     /** 来源 */
     private String channel;
+
+    /** 退单发起方类型 */
+    private RefundInitiatorEnum refundInitiator;
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public enum RefundInitiatorEnum {
+        TIMEOUT("timeout", "超时系统退单"),
+        USER("user", "用户主动退单"),
+        ;
+        private String code;
+        private String info;
+    }
 
 }

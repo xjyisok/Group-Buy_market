@@ -84,4 +84,40 @@ public class TradeRefundOrderService implements ITradeRefundOrderService {
     public List<UserGroupBuyOrderListDetailEntity> queryTimeOutUnpaidOrder() {
         return tradeRepository.queryTimeOutUnpaidOrder();
     }
+
+    @Override
+    public void compensateRefundOrder(TradeRefundCommandEntity command, Integer orderStatus) throws Exception {
+        log.info("补偿退单 userId:{} outTradeNo:{} orderStatus:{}", command.getUserId(), command.getOutTradeNo(), orderStatus);
+        MarketPayOrderEntity marketPayOrderEntity = tradeRepository.queryNoPayMarketPayOrderByOutTradeNo(
+                command.getUserId(), command.getOutTradeNo());
+        if (marketPayOrderEntity == null) {
+            log.warn("补偿退单：订单不存在 userId:{} outTradeNo:{}", command.getUserId(), command.getOutTradeNo());
+            return;
+        }
+        // 幂等：已退款的直接跳过
+        if (TradeOrderStatusEnumVO.CLOSE.equals(marketPayOrderEntity.getTradeOrderStatusEnumVO())
+                || TradeOrderStatusEnumVO.REFUND.equals(marketPayOrderEntity.getTradeOrderStatusEnumVO())) {
+            log.info("补偿退单：订单已退款，跳过 userId:{} outTradeNo:{}", command.getUserId(), command.getOutTradeNo());
+            return;
+        }
+        TradeRefundOrderEntity tradeRefundOrderEntity = TradeRefundOrderEntity.builder()
+                .userId(command.getUserId())
+                .outTradeNo(command.getOutTradeNo())
+                .orderId(marketPayOrderEntity.getOrderId())
+                .teamId(marketPayOrderEntity.getTeamId())
+                .build();
+        // 查询 activityId
+        GroupBuyTeamEntity team = tradeRepository.queryGroupBuyTeamByTeamId(marketPayOrderEntity.getTeamId());
+        tradeRefundOrderEntity.setActivityId(team.getActivityId());
+
+        // 按支付单状态路由：status=0 未支付 → unpaid2Refund；status=1 已支付未成团 → paid2Refund
+        IRefundOrderStrategy strategy;
+        if (orderStatus == 0) {
+            strategy = strategyMap.get(RefundTypeEnumVO.UNPAID_UNLOCK.getStrategy());
+        } else {
+            strategy = strategyMap.get(RefundTypeEnumVO.PAID_UNFORMED.getStrategy());
+        }
+        strategy.refundOrder(tradeRefundOrderEntity);
+        log.info("补偿退单完成 userId:{} outTradeNo:{}", command.getUserId(), command.getOutTradeNo());
+    }
 }

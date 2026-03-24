@@ -60,4 +60,21 @@ public interface ITradeRepository {
      * @param outTradeNo 外部交易单号
      */
     void syncOrderStatus2Complete(String outTradeNo);
+
+    /**
+     * 关闭超时未成功的拼团（只关 PROGRESS 状态）
+     * @param teamId 团ID
+     * @return 影响行数，0 表示团已被结算，跳过退款
+     */
+    int closeTimeOutTeam(String teamId);
+
+    /**
+     * 查询超时且仍为 PROGRESS 状态的团列表
+     */
+    List<String> queryTimeOutProgressTeams();
+
+    /**
+     * 查询指定团内所有未退款的用户订单（status in 0,1）
+     */
+    List<UserGroupBuyOrderListDetailEntity> queryUnRefundedOrdersByTeamId(String teamId);
 }

@@ -28,5 +28,7 @@ public class UserGroupBuyOrderListDetailEntity {
     private String source;
     /** 来源 */
     private String channel;
+    /** 用户支付单状态（0-未支付 1-已支付 2-已退款） */
+    private Integer status;
 
 }

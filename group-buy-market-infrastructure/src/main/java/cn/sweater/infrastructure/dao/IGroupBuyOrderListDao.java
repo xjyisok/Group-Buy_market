@@ -40,4 +40,9 @@ public interface IGroupBuyOrderListDao {
     List<GroupBuyOrderList> queryTimeOutUnpaidOrder();
 
     int syncOrderStatus2Complete(GroupBuyOrderList req);
+
+    /**
+     * 查询指定团内所有未退款的用户订单（status in 0,1，即未支付或已支付但未退款）
+     */
+    List<GroupBuyOrderList> queryUnRefundedOrdersByTeamId(String teamId);
 }

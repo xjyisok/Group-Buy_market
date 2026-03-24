@@ -14,4 +14,10 @@ public interface ITradeRefundOrderService {
     void restoreTeamStockLock(TeamRefundSuccess teamRefundSuccess);
 
     List<UserGroupBuyOrderListDetailEntity> queryTimeOutUnpaidOrder();
+
+    /**
+     * 补偿退单：不走责任链，直接按支付单状态路由
+     * status=0(未支付) → unpaid2Refund；status=1(已支付未成团) → paid2Refund
+     */
+    void compensateRefundOrder(TradeRefundCommandEntity command, Integer orderStatus) throws Exception;
 }

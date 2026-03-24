@@ -10,6 +10,7 @@ import cn.sweater.domain.trade.service.lock.filter.UserTakeLimitRuleFilter;
 import cn.sweater.domain.trade.service.refund.filter.DataNodeFilter;
 import cn.sweater.domain.trade.service.refund.filter.PayStatusVerifyNodeFilter;
 import cn.sweater.domain.trade.service.refund.filter.RefundOrderNodeFilter;
+import cn.sweater.domain.trade.service.refund.filter.RefundPermissionCheckNodeFilter;
 import cn.sweater.domain.trade.service.refund.filter.UniqueRefundNodeFilter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,10 +26,12 @@ import org.springframework.stereotype.Service;
 public class RefundRuleFilterFactory {
     @Bean("tradeRefundRuleFilter")
     BusinessLinkedList<TradeRefundCommandEntity,RefundRuleFilterFactory.DynamicContext,TradeRefundBehaviorEntity> tradeRuleFilter
-            (DataNodeFilter dataNodeFilter, PayStatusVerifyNodeFilter payStatusVerifyNodeFilter,
+            (DataNodeFilter dataNodeFilter, RefundPermissionCheckNodeFilter refundPermissionCheckNodeFilter,
+             PayStatusVerifyNodeFilter payStatusVerifyNodeFilter,
              UniqueRefundNodeFilter uniqueRefundNodeFilter, RefundOrderNodeFilter refundOrderNodeFilter) {
         LinkArmory<TradeRefundCommandEntity, RefundRuleFilterFactory.DynamicContext, TradeRefundBehaviorEntity> linkArmory
-                =new LinkArmory<>("交易规则过滤链",dataNodeFilter,payStatusVerifyNodeFilter,uniqueRefundNodeFilter,refundOrderNodeFilter);
+                =new LinkArmory<>("交易规则过滤链",dataNodeFilter,refundPermissionCheckNodeFilter
+                ,payStatusVerifyNodeFilter,uniqueRefundNodeFilter,refundOrderNodeFilter);
         return linkArmory.getLogicLink();
     }
 

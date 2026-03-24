@@ -47,6 +47,7 @@ public class TimeOutRefundJob {
                     tradeRefundCommandEntity.setSource(timeOutOrderList.getSource());
                     tradeRefundCommandEntity.setChannel(timeOutOrderList.getChannel());
                     tradeRefundCommandEntity.setUserId(timeOutOrderList.getUserId());
+                    tradeRefundCommandEntity.setRefundInitiator(TradeRefundCommandEntity.RefundInitiatorEnum.TIMEOUT);
                     tradeRefundOrderService.refundOrder(tradeRefundCommandEntity);
                     successCount++;
                     log.info("超时订单退单成功，用户ID：{}，交易单号：{}", timeOutOrderList.getUserId(), timeOutOrderList.getOutTradeNo());

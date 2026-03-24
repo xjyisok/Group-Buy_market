@@ -15,9 +15,15 @@ import javax.annotation.Resource;
 /**
  * 临界并发支付状态核查节点
  * <p>
- * 当本地订单状态为 CREATE(0) 时，调用支付宝 alipay.trade.close 关闭该笔交易：
- * - 关单成功（true）：支付宝确认未支付，且从此拒绝用户对该订单的任何付款请求，TOCTOU 窗口彻底关闭，继续走未支付退款。
- * - 关单失败（false，subCode=ACQ.TRADE_HAS_SUCCESS）：说明用户已经付款，修正本地状态为 COMPLETE，走已支付退款。
+ * 仅对超时退单（TIMEOUT）生效：
+ * 系统在拼团超时那一刻发起退单，此时用户可能恰好完成了支付宝付款，存在竞态窗口。
+ * 通过调用支付宝 alipay.trade.close 来确认支付状态：
+ * - 关单成功（true）：支付宝确认未支付，窗口彻底关闭，继续走未支付退款。
+ * - 关单失败（false，subCode=ACQ.TRADE_HAS_SUCCESS）：用户刚刚付款成功，修正本地状态为 COMPLETE，
+ *   由 RefundPermissionCheckNodeFilter 在下次执行时拦截（TIMEOUT 不允许处理已支付单），
+ *   等待补偿任务处理。
+ *
+ * 用户主动退单（USER）直接跳过：用户自己点退款不会同时在付款，不存在竞态。
  * </p>
  */
 @Service
@@ -34,6 +40,11 @@ public class PayStatusVerifyNodeFilter implements ILogicHandler<TradeRefundComma
                                            RefundRuleFilterFactory.DynamicContext dynamicContext) throws Exception {
         String outTradeNo = command.getOutTradeNo();
 
+        // 用户主动退单：用户自己发起退款，不存在同时付款的竞态，直接跳过
+        if (TradeRefundCommandEntity.RefundInitiatorEnum.USER.equals(command.getRefundInitiator())) {
+            return next(command, dynamicContext);
+        }
+
         if (dynamicContext.getMarketPayOrderEntity() == null) {
             log.warn("PayStatusVerifyNodeFilter: marketPayOrderEntity 为空，跳过核查 outTradeNo:{}", outTradeNo);
             return next(command, dynamicContext);
@@ -41,17 +52,25 @@ public class PayStatusVerifyNodeFilter implements ILogicHandler<TradeRefundComma
 
         TradeOrderStatusEnumVO localStatus = dynamicContext.getMarketPayOrderEntity().getTradeOrderStatusEnumVO();
 
+        // 超时退单：本地状态为 CREATE 时，调支付宝关单确认是否存在临界支付
         if (TradeOrderStatusEnumVO.CREATE.equals(localStatus)) {
-            log.info("PayStatusVerifyNodeFilter: 本地状态为 CREATE，调用支付宝关单 outTradeNo:{}", outTradeNo);
+            log.info("PayStatusVerifyNodeFilter: 超时退单-本地状态为 CREATE，调用支付宝关单核查 outTradeNo:{}", outTradeNo);
             boolean closed = tradePort.closePayOrder(outTradeNo);
 
             if (!closed) {
-                // 关单失败 = 订单已支付，修正本地状态
-                log.info("PayStatusVerifyNodeFilter: 关单失败，订单已支付，修正状态 CREATE→COMPLETE outTradeNo:{}", outTradeNo);
+                // 关单失败 = 用户在超时瞬间完成了支付，修正本地状态
+                // 超时退单无权处理已支付单，直接返回 FORBIDDEN
+                // 该订单后续由补偿扫描任务（TeamCompensateRefundJob）关团后统一处理
+                log.info("PayStatusVerifyNodeFilter: 关单失败，用户临界支付成功，修正状态 CREATE→COMPLETE，超时退单终止 outTradeNo:{}", outTradeNo);
                 tradeRepository.syncOrderStatus2Complete(outTradeNo);
-                dynamicContext.getMarketPayOrderEntity().setTradeOrderStatusEnumVO(TradeOrderStatusEnumVO.COMPLETE);
+                return TradeRefundBehaviorEntity.builder()
+                        .userId(command.getUserId())
+                        .orderId(dynamicContext.getMarketPayOrderEntity().getOrderId())
+                        .teamId(dynamicContext.getMarketPayOrderEntity().getTeamId())
+                        .tradeRefundBehaviorEnum(TradeRefundBehaviorEntity.TradeRefundBehaviorEnum.FORBIDDEN)
+                        .build();
             }
-            // closed=true：支付宝已关单，后续用户无法再付款，状态保持 CREATE 继续走未支付退款
+            // closed=true：支付宝确认未支付，继续走未支付退款
         }
 
         return next(command, dynamicContext);

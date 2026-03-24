@@ -35,6 +35,7 @@ public class TradeRefundBehaviorEntity {
         SUCCESS("success", "成功"),
         REPEAT("repeat", "重复"),
         FAIL("fail", "失败"),
+        FORBIDDEN("forbidden", "权限拒绝"),
 
         ;
 
