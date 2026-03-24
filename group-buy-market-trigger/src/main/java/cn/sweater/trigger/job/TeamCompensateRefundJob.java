@@ -1,9 +1,6 @@
 package cn.sweater.trigger.job;
 
-import cn.sweater.domain.activity.model.entity.UserGroupBuyOrderListDetailEntity;
 import cn.sweater.domain.trade.adapter.repository.ITradeRepository;
-import cn.sweater.domain.trade.model.entity.TradeRefundCommandEntity;
-import cn.sweater.domain.trade.service.ITradeRefundOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -32,9 +29,6 @@ public class TeamCompensateRefundJob {
     private ITradeRepository tradeRepository;
 
     @Resource
-    private ITradeRefundOrderService tradeRefundOrderService;
-
-    @Resource
     private RedissonClient redissonClient;
 
     @Scheduled(cron = "0 0/5 * * * ?")
@@ -48,7 +42,6 @@ public class TeamCompensateRefundJob {
             }
             log.info("补偿退单任务：开始执行");
 
-            // 第一阶段：查询超时仍为 PROGRESS 的团
             List<String> timeOutTeamIds = tradeRepository.queryTimeOutProgressTeams();
             if (timeOutTeamIds == null || timeOutTeamIds.isEmpty()) {
                 log.info("补偿退单任务：无超时进行中的拼团，任务结束");
@@ -57,44 +50,14 @@ public class TeamCompensateRefundJob {
 
             for (String teamId : timeOutTeamIds) {
                 try {
-                    // 第二阶段：关团，affected rows=0 说明团已被结算为 COMPLETE，跳过
-                    int affected = tradeRepository.closeTimeOutTeam(teamId);
-                    if (affected == 0) {
-                        log.info("补偿退单任务：团在临界时刻被结算成功，跳过退款 teamId:{}", teamId);
-                        continue;
+                    // 原子操作：关团 + 批量写 notify_task，同一事务保证原子性
+                    // affected=0 说明团在临界时刻被结算为 COMPLETE，跳过
+                    int count = tradeRepository.closeTeamAndInsertRefundTasks(teamId);
+                    if (count == 0) {
+                        log.info("补偿退单任务：团在临界时刻被结算成功，跳过 teamId:{}", teamId);
+                    } else {
+                        log.info("补偿退单任务：关团+写退款消息完成 teamId:{} 消息数:{}", teamId, count);
                     }
-
-                    // 第三阶段：查询团内所有未退款订单
-                    List<UserGroupBuyOrderListDetailEntity> unRefundedOrders =
-                            tradeRepository.queryUnRefundedOrdersByTeamId(teamId);
-                    if (unRefundedOrders == null || unRefundedOrders.isEmpty()) {
-                        log.info("补偿退单任务：团内无未退款订单 teamId:{}", teamId);
-                        continue;
-                    }
-
-                    int successCount = 0;
-                    int failCount = 0;
-                    for (UserGroupBuyOrderListDetailEntity order : unRefundedOrders) {
-                        try {
-                            TradeRefundCommandEntity command = new TradeRefundCommandEntity();
-                            command.setUserId(order.getUserId());
-                            command.setOutTradeNo(order.getOutTradeNo());
-                            command.setSource(order.getSource());
-                            command.setChannel(order.getChannel());
-                            // 补偿任务不走责任链权限守卫，直接由 Repository 层路由
-                            // status=0(未支付) → unpaid2Refund；status=1(已支付) → paid2Refund
-                            tradeRefundOrderService.compensateRefundOrder(command, order.getStatus());
-                            successCount++;
-                            log.info("补偿退单成功 teamId:{} userId:{} outTradeNo:{} status:{}",
-                                    teamId, order.getUserId(), order.getOutTradeNo(), order.getStatus());
-                        } catch (Exception e) {
-                            failCount++;
-                            log.error("补偿退单失败 teamId:{} userId:{} outTradeNo:{}",
-                                    teamId, order.getUserId(), order.getOutTradeNo(), e);
-                        }
-                    }
-                    log.info("补偿退单任务：团处理完成 teamId:{} 成功:{} 失败:{}", teamId, successCount, failCount);
-
                 } catch (Exception e) {
                     log.error("补偿退单任务：处理团异常 teamId:{}", teamId, e);
                 }

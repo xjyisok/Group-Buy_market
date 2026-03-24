@@ -16,8 +16,8 @@ import javax.annotation.Resource;
 @Service
 @Slf4j
 public class UniqueRefundNodeFilter implements ILogicHandler<TradeRefundCommandEntity, RefundRuleFilterFactory.DynamicContext, TradeRefundBehaviorEntity> {
-    @Resource
-    private ITradeRepository tradeRepository;
+//    @Resource
+//    private ITradeRepository tradeRepository;
     @Override
     public TradeRefundBehaviorEntity apply(TradeRefundCommandEntity tradeRefundCommandEntity, RefundRuleFilterFactory.DynamicContext dynamicContext) throws Exception {
         MarketPayOrderEntity marketPayOrderEntity=dynamicContext.getMarketPayOrderEntity();
@@ -35,8 +35,8 @@ public class UniqueRefundNodeFilter implements ILogicHandler<TradeRefundCommandE
                     .build();
         }
         // 2. 查询拼团状态
-        GroupBuyTeamEntity groupBuyTeamEntity = tradeRepository.queryGroupBuyTeamByTeamId(teamId);
-        dynamicContext.setGroupBuyTeamEntity(groupBuyTeamEntity);
+//        GroupBuyTeamEntity groupBuyTeamEntity = tradeRepository.queryGroupBuyTeamByTeamId(teamId);
+//        dynamicContext.setGroupBuyTeamEntity(groupBuyTeamEntity);
         return next(tradeRefundCommandEntity, dynamicContext);
     }
 }

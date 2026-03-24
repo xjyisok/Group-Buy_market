@@ -599,6 +599,52 @@ public class ITradeRepositoryImpl implements ITradeRepository {
     }
 
     @Override
+    @Transactional(timeout = 5000)
+    public int closeTeamAndInsertRefundTasks(String teamId) {
+        // 1. CAS 关团，affected=0 说明团已被结算为 COMPLETE，跳过
+        int affected = groupBuyOrderDao.closeTimeOutTeam(teamId);
+        if (affected == 0) {
+            log.info("关团+写消息：团在临界时刻被结算成功，跳过 teamId:{}", teamId);
+            return 0;
+        }
+        // 2. 查询团内所有未退款用户单
+        List<GroupBuyOrderList> unRefundedList = groupBuyOrderListDao.queryUnRefundedOrdersByTeamId(teamId);
+        if (unRefundedList == null || unRefundedList.isEmpty()) {
+            log.info("关团+写消息：团内无未退款订单 teamId:{}", teamId);
+            return 0;
+        }
+        // 3. 按用户单状态写入 notify_task（status=0未支付→UNPAID2REFUND，status=1已支付→PAID2REFUND）
+        for (GroupBuyOrderList item : unRefundedList) {
+            String category = item.getStatus() == 0
+                    ? TaskNotifyCategoryEnumVO.TRADE_UNPAID2REFUND.getCode()
+                    : TaskNotifyCategoryEnumVO.TRADE_PAID2REFUND.getCode();
+            String refundType = item.getStatus() == 0
+                    ? RefundTypeEnumVO.UNPAID_UNLOCK.getCode()
+                    : RefundTypeEnumVO.PAID_UNFORMED.getCode();
+            Map<String, Object> map = new HashMap<>();
+            map.put("type", refundType);
+            map.put("teamId", teamId);
+            map.put("userId", item.getUserId());
+            map.put("orderId", item.getOrderId());
+            map.put("activityId", item.getActivityId());
+            map.put("outTradeNo", item.getOutTradeNo());
+            NotifyTask notifyTask = new NotifyTask();
+            notifyTask.setActivityId(item.getActivityId());
+            notifyTask.setTeamId(teamId);
+            notifyTask.setNotifyType(NotifyTypeEnumVO.MQ.getCode());
+            notifyTask.setNotifyMQ(topic_team_refund);
+            notifyTask.setNotifyCount(0);
+            notifyTask.setNotifyStatus(0);
+            notifyTask.setNotifyCategory(category);
+            notifyTask.setUuid(teamId + Constants.UNDERLINE + category + Constants.UNDERLINE + item.getOrderId());
+            notifyTask.setParameterJson(JSON.toJSONString(map));
+            notifyTaskDao.insert(notifyTask);
+        }
+        log.info("关团+写消息：完成 teamId:{} 写入消息数:{}", teamId, unRefundedList.size());
+        return unRefundedList.size();
+    }
+
+    @Override
     public List<UserGroupBuyOrderListDetailEntity> queryUnRefundedOrdersByTeamId(String teamId) {
         List<GroupBuyOrderList> list = groupBuyOrderListDao.queryUnRefundedOrdersByTeamId(teamId);
         if (null == list || list.isEmpty()) {

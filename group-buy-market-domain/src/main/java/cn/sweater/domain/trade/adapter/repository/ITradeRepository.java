@@ -77,4 +77,10 @@ public interface ITradeRepository {
      * 查询指定团内所有未退款的用户订单（status in 0,1）
      */
     List<UserGroupBuyOrderListDetailEntity> queryUnRefundedOrdersByTeamId(String teamId);
+
+    /**
+     * 原子操作：关闭超时团 + 对团内所有未退款用户单写入 notify_task 消息记录
+     * @return 0=团已被结算跳过，>0=关团成功并写入的消息数量
+     */
+    int closeTeamAndInsertRefundTasks(String teamId);
 }
