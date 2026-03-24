@@ -288,6 +288,31 @@ public class ITradeRepositoryImpl implements ITradeRepository {
     }
 
     @Override
+    public void publishRefundMessage(NotifyTaskEntity notifyTaskEntity) {
+        eventPublisher.publish(notifyTaskEntity.getNotifyMQ(), notifyTaskEntity.getParameterJson());
+    }
+
+    @Override
+    public List<NotifyTaskEntity> queryUnExecutedRefundNotifyTaskList() {
+        List<NotifyTask> notifyTaskList = notifyTaskDao.queryUnExecutedRefundNotifyTaskList();
+        if (notifyTaskList == null || notifyTaskList.isEmpty()) return new ArrayList<>();
+        List<NotifyTaskEntity> result = new ArrayList<>();
+        for (NotifyTask notifyTask : notifyTaskList) {
+            result.add(NotifyTaskEntity.builder()
+                    .teamId(notifyTask.getTeamId())
+                    .notifyUrl(notifyTask.getNotifyUrl())
+                    .notifyCount(notifyTask.getNotifyCount())
+                    .notifyMQ(notifyTask.getNotifyMQ())
+                    .notifyStatus(notifyTask.getNotifyStatus())
+                    .parameterJson(notifyTask.getParameterJson())
+                    .notifyType(notifyTask.getNotifyType())
+                    .uuid(notifyTask.getUuid())
+                    .build());
+        }
+        return result;
+    }
+
+    @Override
     public List<NotifyTaskEntity> queryUnExecutedNotifyTaskList() {
         List<NotifyTask> notifyTaskList = notifyTaskDao.queryUnExecutedNotifyTaskList();
         //System.out.println(notifyTaskList.size());

@@ -34,6 +34,12 @@ public interface ITradeRepository {
 
     List<NotifyTaskEntity> queryUnExecutedNotifyTaskList();
     List<NotifyTaskEntity> queryUnExecutedNotifyTaskList(String teamId);
+    List<NotifyTaskEntity> queryUnExecutedRefundNotifyTaskList();
+
+    /**
+     * 投递退款消息到 MQ
+     */
+    void publishRefundMessage(NotifyTaskEntity notifyTaskEntity);
 
     int updateNotifyTaskStatusSuccess(String uuid);
 

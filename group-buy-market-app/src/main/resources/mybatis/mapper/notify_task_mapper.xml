@@ -31,6 +31,14 @@
             limit 50
     </select>
 
+    <select id="queryUnExecutedRefundNotifyTaskList" resultMap="dataMap">
+        select activity_id, team_id, notify_url, notify_type, notify_mq, notify_count, notify_status, notify_category, uuid, parameter_json
+        from notify_task
+        where notify_status in (0, 2)
+          and notify_category in ('trade_unpaid2refund', 'trade_paid2refund')
+        limit 100
+    </select>
+
     <select id="queryUnExecutedNotifyTaskByTeamId" resultMap="dataMap">
         select activity_id, team_id, notify_url,notify_mq, notify_count,notify_type, notify_status, notify_category,uuid,parameter_json
         from notify_task
